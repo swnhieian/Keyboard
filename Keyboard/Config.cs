@@ -9,10 +9,11 @@ using System.Windows.Shapes;
 
 namespace Keyboard
 {
-    class Config
+    static class Config
     {
-        public bool isWindowFullScreen = false;
-        public Brush windowBackgroundColor = Brushes.Black;
+        public static bool isWindowFullScreen = false;
+        public static Brush windowBackgroundColor = Brushes.Black;
+        public static Brush mainCanvasBackgroundColor = Brushes.Green;
 
     }
 }

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace Keyboard
 {
     /// <summary>
@@ -20,24 +21,46 @@ namespace Keyboard
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Config config;
+        private SoftKeyboard softKeyboard;
+        //临时变量
+        Rectangle r;
         public MainWindow()
         {
 
             InitializeComponent();
-            InitializeWindow();
-           
+            initializeWindow();
+            initializeVars();
         }
-        private void InitializeWindow()
+        private void initializeWindow()
         {
-            config = new Config();
             //设定窗口为全屏
-            this.WindowState = WindowState.Maximized;
+            //this.WindowState = WindowState.Maximized;
             this.ResizeMode = ResizeMode.NoResize;
             this.Topmost = true;
-            this.WindowStyle = config.isWindowFullScreen ? WindowStyle.None : WindowStyle.SingleBorderWindow;
+            this.WindowStyle = Config.isWindowFullScreen ? WindowStyle.None : WindowStyle.SingleBorderWindow;
             //设定背景颜色
-            this.Background = config.windowBackgroundColor;
+            this.Background = Config.windowBackgroundColor;
+            this.mainCanvas.Background = Config.mainCanvasBackgroundColor;
+        }
+        private void initializeVars()
+        {
+            this.softKeyboard = new SoftKeyboard(this.softKeyboardCanvas);
+        }
+
+
+        private void mainCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            /*Simulator.Press(Key.LeftAlt);
+            Simulator.Press(Key.F4);
+            Simulator.Release(Key.F4);
+            Simulator.Release(Key.LeftAlt);*/
+            e.Handled = true;
+        }
+
+        private void softKeyboardCanvas_PreviewTouchDown(object sender, TouchEventArgs e)
+        {
+            Console.WriteLine(e.GetTouchPoint(this.softKeyboardCanvas).ToString());
+            e.Handled = true;
         }
     }
 }
