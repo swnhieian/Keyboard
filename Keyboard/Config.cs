@@ -14,6 +14,7 @@ namespace Keyboard
         public static bool isWindowFullScreen = false;
         public static Brush windowBackgroundColor = Brushes.Black;
         public static Brush mainCanvasBackgroundColor = Brushes.Green;
+        public static bool isPractice = false;
 
     }
 }

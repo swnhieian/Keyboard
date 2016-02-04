@@ -8,5 +8,6 @@
         Title="MainWindow" Height="1824" Width="2736">
     <Canvas Name="mainCanvas" HorizontalAlignment="Left" Height="1824" Margin="0,0,0,0" VerticalAlignment="Top" Width="2736" MouseDown="mainCanvas_MouseDown">
         <Canvas Name="softKeyboardCanvas" Height="318" Canvas.Left="163" Canvas.Top="173" Width="1156" PreviewTouchDown="softKeyboardCanvas_PreviewTouchDown"/>
+        <Button x:Name="practiceButton" Content="Button" Canvas.Left="61" Canvas.Top="53" Width="75" Click="practiceButton_Click"/>
     </Canvas>
 </Window>

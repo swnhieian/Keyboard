@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
+
 
 namespace Keyboard
 {
@@ -21,6 +24,17 @@ namespace Keyboard
     /// </summary>
     public partial class MainWindow : Window
     {
+       
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        [DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll")]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        int GWL_EXSTYLE = (-20);
+        int WS_EX_NOACTIVATE = 0x08000000;
+
+
         private SoftKeyboard softKeyboard;
         //临时变量
         Rectangle r;
@@ -30,6 +44,15 @@ namespace Keyboard
             InitializeComponent();
             initializeWindow();
             initializeVars();
+        }
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+            if (Config.isPractice)
+            {
+                WindowInteropHelper helper = new WindowInteropHelper(this);
+                SetWindowLong(helper.Handle, GWL_EXSTYLE, GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
+            }
         }
         private void initializeWindow()
         {
@@ -45,6 +68,7 @@ namespace Keyboard
         private void initializeVars()
         {
             this.softKeyboard = new SoftKeyboard(this.softKeyboardCanvas);
+
         }
 
 
@@ -59,8 +83,16 @@ namespace Keyboard
 
         private void softKeyboardCanvas_PreviewTouchDown(object sender, TouchEventArgs e)
         {
-            Console.WriteLine(e.GetTouchPoint(this.softKeyboardCanvas).ToString());
+            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
+            Console.WriteLine("pos:"+pos.X + " "+ pos.Y);
+            System.Windows.Forms.SendKeys.SendWait("Yeah, 我成功了！！！！");
             e.Handled = true;
+        }
+
+        private void practiceButton_Click(object sender, RoutedEventArgs e)
+        {
+            Config.isPractice = !Config.isPractice;
+
         }
     }
 }
