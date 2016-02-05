@@ -182,7 +182,7 @@ namespace Keyboard
             {
                 if (this.allKeys[i].contains(pos))
                 {
-                    this.allKeys[i].press();
+                    this.allKeys[i].release();
                     break;
                 }
             }

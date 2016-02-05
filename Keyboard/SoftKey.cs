@@ -49,7 +49,7 @@ namespace Keyboard
                 textBlock.Text = this.upChar;
             }
             else {
-                textBlock.Text = upChar + "\n" + downChar;
+                textBlock.Text = upChar + "\n\n" + downChar;
             }
             textBlock.Foreground = this.foregroundColor;
             textBlock.HorizontalAlignment = HorizontalAlignment.Center;

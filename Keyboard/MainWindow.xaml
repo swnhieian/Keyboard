@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="1824" Width="2736">
     <Canvas Name="mainCanvas" HorizontalAlignment="Left" Height="1824" Margin="0,0,0,0" VerticalAlignment="Top" Width="2736" MouseDown="mainCanvas_MouseDown">
-        <Canvas Name="softKeyboardCanvas" Height="318" Canvas.Left="157" Canvas.Top="227" Width="1156" PreviewTouchDown="softKeyboardCanvas_PreviewTouchDown" PreviewTouchUp="softKeyboardCanvas_PreviewTouchUp"/>
+        <Canvas Name="softKeyboardCanvas" Height="840" Canvas.Top="305" Width="2736" PreviewTouchDown="softKeyboardCanvas_PreviewTouchDown" PreviewTouchUp="softKeyboardCanvas_PreviewTouchUp"/>
         <Button x:Name="practiceButton" Content="Button" Canvas.Left="61" Canvas.Top="53" Width="75" Click="practiceButton_Click"/>
     </Canvas>
 </Window>

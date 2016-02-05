@@ -17,10 +17,10 @@ namespace Keyboard
         public static bool isWindowFullScreen = false;
         public static Brush windowBackgroundColor = Brushes.Black;
         public static Brush mainCanvasBackgroundColor = Brushes.Green;
-        public static bool isPractice = false;
+        public static bool isPractice = true;
 
-        public static double charKeyWidth = 50;
-        public static double charKeyHeight = 50;
+        public static double charKeyWidth = 80;
+        public static double charKeyHeight = 80;
         public static double keyInterval = 5;
         public static Key[] line0Key =
         {
