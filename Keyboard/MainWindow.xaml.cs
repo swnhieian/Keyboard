@@ -84,8 +84,13 @@ namespace Keyboard
         private void softKeyboardCanvas_PreviewTouchDown(object sender, TouchEventArgs e)
         {
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
-            Console.WriteLine("pos:"+pos.X + " "+ pos.Y);
-            System.Windows.Forms.SendKeys.SendWait("Yeah, 我成功了！！！！");
+            this.softKeyboard.touchDown(pos);
+            e.Handled = true;
+        }
+        private void softKeyboardCanvas_PreviewTouchUp(object sender, TouchEventArgs e)
+        {
+            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
+            this.softKeyboard.touchUp(pos);
             e.Handled = true;
         }
 
@@ -93,6 +98,11 @@ namespace Keyboard
         {
             Config.isPractice = !Config.isPractice;
 
+           
+
+
         }
+
+        
     }
 }

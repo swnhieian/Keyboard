@@ -63,6 +63,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Simulator.cs" />
+    <Compile Include="SoftKey.cs" />
     <Compile Include="SoftKeyboard.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
