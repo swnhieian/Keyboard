@@ -213,8 +213,9 @@ namespace Keyboard
 
         public void touchDown(Point pos)
         {
-            if (Config.predictAlgorithm == PredictAlgorithms.None)
+            if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn)
             {
+                wordPredictor.reset();
                 //plain input
                 for (int i = 0; i < this.allKeys.Count; i++)
                 {
@@ -232,6 +233,10 @@ namespace Keyboard
                 {
                     if (this.nonCharKeys[i].contains(pos))
                     {
+                        if (this.nonCharKeys[i].isControlKey)
+                        {
+                            wordPredictor.isControlKeyOn = true;
+                        }
                         this.nonCharKeys[i].press();
                         return;
                     }
@@ -261,7 +266,7 @@ namespace Keyboard
 
         public void touchUp(Point pos)
         {
-            if (Config.predictAlgorithm == PredictAlgorithms.None)
+            if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn)
             {
                 //plain input
                 for (int i = 0; i < this.allKeys.Count; i++)
@@ -269,6 +274,10 @@ namespace Keyboard
                     if (this.allKeys[i].contains(pos))
                     {
                         this.allKeys[i].release();
+                        if (this.allKeys[i].isControlKey)
+                        {
+                            wordPredictor.isControlKeyOn = false;
+                        }
                         break;
                     }
                 }

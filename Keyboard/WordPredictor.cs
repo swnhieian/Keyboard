@@ -22,6 +22,7 @@ namespace Keyboard
     {
         string wordFreqName = "../../Resources/wordFreq.json";
         string lenSetName = "../../Resources/lenSet.json";
+        public bool isControlKeyOn = false;
         Canvas canvas;
         SoftKeyboard keyboard;
         List<Point> pointList;
@@ -59,6 +60,11 @@ namespace Keyboard
         {
             string jsonWordFreq = File.ReadAllText(wordFreqName);
             wordFreqDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(jsonWordFreq);
+        }
+        public void reset()
+        {
+            this.pointList.Clear();
+            updateHintBlocks();
         }
         private List<KeyValuePair<string, double>> predict()
         {

@@ -30,6 +30,7 @@ namespace Keyboard
         double keyPosY;
 
         bool capsLockStatus;
+        public bool isControlKey;
 
         public SoftKey(Key keyV, string upChar, string downChar, double posX, double posY, double width, double height)
         {
@@ -71,6 +72,14 @@ namespace Keyboard
                 name = Char.ToLower(name);
                 Config.keyPosX.Add(name, this.keyPosX + keyWidth / 2);
                 Config.keyPosY.Add(name, this.keyPosY + keyHeight / 2);
+            }
+            if (keyValue == Key.Tab || keyValue == Key.LeftShift || keyValue == Key.RightShift ||
+                keyValue == Key.LeftAlt || keyValue == Key.RightAlt || keyValue == Key.LeftCtrl || keyValue == Key.RightCtrl)
+            {
+                this.isControlKey = true;
+            } else
+            {
+                this.isControlKey = false;
             }
         }
 

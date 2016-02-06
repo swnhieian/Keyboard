@@ -63,7 +63,7 @@ namespace Keyboard
             //设定窗口为全屏
             this.WindowState = WindowState.Maximized;
             //this.ResizeMode = ResizeMode.NoResize;
-            this.Topmost = true;
+            //this.Topmost = true;
             this.WindowStyle = Config.isWindowFullScreen ? WindowStyle.None : WindowStyle.SingleBorderWindow;
             //设定背景颜色
             this.Background = Config.windowBackgroundColor;
