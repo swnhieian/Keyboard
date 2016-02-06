@@ -97,13 +97,13 @@ namespace Keyboard
         {
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
             this.softKeyboard.touchDown(pos);
-            e.Handled = true;
+            //e.Handled = true;
         }
         private void softKeyboardCanvas_PreviewTouchUp(object sender, TouchEventArgs e)
         {
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
             this.softKeyboard.touchUp(pos);
-            e.Handled = true;
+            //e.Handled = true;
         }
 
         private void practiceButton_Click(object sender, RoutedEventArgs e)
@@ -113,10 +113,10 @@ namespace Keyboard
 
         private void softKeyboardCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            Point pos = e.GetPosition(this.softKeyboardCanvas);
+           /* Point pos = e.GetPosition(this.softKeyboardCanvas);
             this.softKeyboard.touchDown(pos);
             this.softKeyboard.touchUp(pos);
-            e.Handled = true;
+            e.Handled = true;*/
 
         }
 

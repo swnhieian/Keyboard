@@ -23,12 +23,14 @@ namespace Keyboard
         string wordFreqName = "../../Resources/wordFreq.json";
         string lenSetName = "../../Resources/lenSet.json";
         Canvas canvas;
+        SoftKeyboard keyboard;
         List<Point> pointList;
         Dictionary<string, int> wordFreqDict;
         TextBlock[] hintBlocks;
-        public WordPredictor(Canvas canvas)
+        public WordPredictor(SoftKeyboard keyboard)
         {
-            this.canvas = canvas;
+            this.keyboard = keyboard;
+            this.canvas = keyboard.canvas;
             loadCorpus();
             pointList = new List<Point>();
             hintBlocks = new TextBlock[Config.hintBlockNum];
@@ -44,7 +46,8 @@ namespace Keyboard
                     TextBlock tb = b.Source as TextBlock;
                     b.Handled = true;
                     int selectedHintBlockNo = hintBlocks.ToList().IndexOf(tb);
-                    select(selectedHintBlockNo);
+                    Console.WriteLine("touchcown" + selectedHintBlockNo);
+                    this.select(selectedHintBlockNo, true);
                 });
                 Canvas.SetTop(hintBlocks[i], -Config.hintBlockHeight);
                 this.canvas.Children.Add(hintBlocks[i]);
@@ -100,13 +103,19 @@ namespace Keyboard
                 Simulator.Type(Key.Space);
             }            
         }
-        public void select(int num)
+        public void select(int num, bool isTouchTrigger = false)
         {
             Console.WriteLine("Select:" + num);
             //put candidate on and clear pointlist
-            Simulator.Type(hintBlocks[num].Text);
-            pointList.Clear();
-            updateHintBlocks();
+            if (pointList.Count > 0)
+            {
+                Simulator.Type(hintBlocks[num].Text);
+                pointList.Clear();
+                updateHintBlocks();
+            } else if (!isTouchTrigger)
+            {
+                Simulator.Type(keyboard.numKey(num));
+            }           
         }
         public void type(Point pos)
         { 

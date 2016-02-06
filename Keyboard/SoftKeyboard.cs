@@ -14,7 +14,7 @@ namespace Keyboard
 {
     class SoftKeyboard
     {
-        private Canvas canvas;
+        public Canvas canvas;
         private List<SoftKey> allKeys;
         private List<SoftKey> nonCharKeys;
         private SoftKey backspaceKey;
@@ -22,6 +22,10 @@ namespace Keyboard
         private List<SoftKey> numKeys;
         private WordPredictor wordPredictor;
         //
+        public Key numKey(int index)
+        {
+            return this.numKeys[index].keyValue;
+        }
         public SoftKeyboard(Canvas canvas)
         {
             this.canvas = canvas;
@@ -33,7 +37,7 @@ namespace Keyboard
             this.allKeys = new List<SoftKey>();
             this.nonCharKeys = new List<SoftKey>();
             this.numKeys = new List<SoftKey>();
-            this.wordPredictor = new WordPredictor(this.canvas);
+            this.wordPredictor = new WordPredictor(this);
         }
         private void renderKeyboard()
         {
@@ -223,6 +227,7 @@ namespace Keyboard
             }
             else {
                 //using predict
+                if (pos.Y < 0) return;
                 for (int i = 0; i < this.nonCharKeys.Count; i++)
                 {
                     if (this.nonCharKeys[i].contains(pos))

@@ -17,7 +17,7 @@ namespace Keyboard
         public Grid key;
         private Rectangle rectangle;
         private TextBlock textBlock;
-        private Key keyValue;
+        public Key keyValue;
         Rect rect;
         Brush backgroundColor = new SolidColorBrush(Color.FromRgb(40, 40, 40));
         Brush activeBackgroundColor = new SolidColorBrush(Color.FromRgb(20, 20, 20));
