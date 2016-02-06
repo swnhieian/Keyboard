@@ -20,6 +20,7 @@ namespace Keyboard
         private Key keyValue;
         Rect rect;
         Brush backgroundColor = new SolidColorBrush(Color.FromRgb(40, 40, 40));
+        Brush activeBackgroundColor = new SolidColorBrush(Color.FromRgb(20, 20, 20));
         Brush foregroundColor = Brushes.White;
         string upChar;
         string downChar;
@@ -27,6 +28,8 @@ namespace Keyboard
         double keyHeight;
         double keyPosX;
         double keyPosY;
+
+        bool capsLockStatus;
 
         public SoftKey(Key keyV, string upChar, string downChar, double posX, double posY, double width, double height)
         {
@@ -55,6 +58,20 @@ namespace Keyboard
             textBlock.HorizontalAlignment = HorizontalAlignment.Center;
             textBlock.VerticalAlignment = VerticalAlignment.Center;
             key.Children.Add(textBlock);
+            //
+            if (this.keyValue == Key.CapsLock)
+            {
+                capsLockStatus = Console.CapsLock;
+                key.Background = Console.CapsLock ? this.activeBackgroundColor : this.backgroundColor;
+            }
+            ///???????
+            if (upChar.Length == 1 && upChar[0]>='A' && upChar[0]<='Z')
+            {
+                char name = upChar[0];
+                name = Char.ToLower(name);
+                Config.keyPosX.Add(name, this.keyPosX + keyWidth / 2);
+                Config.keyPosY.Add(name, this.keyPosY + keyHeight / 2);
+            }
         }
 
         public bool contains(Point pos)
@@ -65,11 +82,22 @@ namespace Keyboard
         public void press()
         {
             Simulator.Press(this.keyValue);
+            if (keyValue == Key.CapsLock)
+            {
+                updateCapsLockStatus();
+            }
         }
         public void release()
         {
             Simulator.Release(this.keyValue);
         }
+        private void updateCapsLockStatus()
+        {
+            capsLockStatus = !capsLockStatus;
+            key.Background = capsLockStatus ? this.activeBackgroundColor : this.backgroundColor;            
+        }
+
+        
 
     }
 }

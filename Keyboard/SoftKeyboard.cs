@@ -16,6 +16,11 @@ namespace Keyboard
     {
         private Canvas canvas;
         private List<SoftKey> allKeys;
+        private List<SoftKey> nonCharKeys;
+        private SoftKey backspaceKey;
+        private SoftKey spacebarKey;
+        private List<SoftKey> numKeys;
+        private WordPredictor wordPredictor;
         //
         public SoftKeyboard(Canvas canvas)
         {
@@ -26,6 +31,9 @@ namespace Keyboard
         private void initilizeVars()
         {
             this.allKeys = new List<SoftKey>();
+            this.nonCharKeys = new List<SoftKey>();
+            this.numKeys = new List<SoftKey>();
+            this.wordPredictor = new WordPredictor(this.canvas);
         }
         private void renderKeyboard()
         {
@@ -41,12 +49,21 @@ namespace Keyboard
             {
                 tempKey = new SoftKey(Config.line0Key[i], Config.line0UpChar[i], Config.line0DownChar[i], pX, pY, w, h);
                 this.allKeys.Add(tempKey);
+                if (i > 0 && i < 10)
+                {
+                    this.numKeys.Add(tempKey);
+                } else
+                {
+                    this.nonCharKeys.Add(tempKey);
+                }
                 this.canvas.Children.Add(tempKey.key);
                 pX += (w + Config.keyInterval);
             }
             //Backspace Key
-            tempKey = new SoftKey(Key.Back, "          ←", "Backspace", pX, pY, 1.5 * Config.charKeyWidth, Config.charKeyHeight);
+            tempKey = new SoftKey(Key.Back, "            ←", "Backspace", pX, pY, 1.5 * Config.charKeyWidth, Config.charKeyHeight);
             this.allKeys.Add(tempKey);
+            //this.nonCharKeys.Add(tempKey);
+            this.backspaceKey = tempKey;
             this.canvas.Children.Add(tempKey.key);
             //Tab Key
             pX = Config.keyInterval;
@@ -54,6 +71,7 @@ namespace Keyboard
             w = 1.5 * Config.charKeyWidth;
             tempKey = new SoftKey(Key.Tab, "Tab", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
             //line1
@@ -63,6 +81,10 @@ namespace Keyboard
             {
                 tempKey = new SoftKey(Config.line1Key[i], Config.line1UpChar[i], Config.line1DownChar[i], pX, pY, w, h);
                 this.allKeys.Add(tempKey);
+                if (i > 9)
+                {
+                    this.nonCharKeys.Add(tempKey);
+                }
                 this.canvas.Children.Add(tempKey.key);
                 pX += (w + Config.keyInterval);
             }
@@ -72,6 +94,7 @@ namespace Keyboard
             w = 1.75 * Config.charKeyWidth;
             tempKey = new SoftKey(Key.CapsLock, "CapsLk", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
             //line2
@@ -81,6 +104,10 @@ namespace Keyboard
             {
                 tempKey = new SoftKey(Config.line2Key[i], Config.line2UpChar[i], Config.line2DownChar[i], pX, pY, w, h);
                 this.allKeys.Add(tempKey);
+                if (i > 8)
+                {
+                    this.nonCharKeys.Add(tempKey);
+                }
                 this.canvas.Children.Add(tempKey.key);
                 pX += (w + Config.keyInterval);
             }
@@ -88,6 +115,7 @@ namespace Keyboard
             w = 1.75 * Config.charKeyWidth + Config.keyInterval;
             tempKey = new SoftKey(Key.Enter, "Enter", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             //LShiftKey
             pX = Config.keyInterval;
@@ -95,6 +123,7 @@ namespace Keyboard
             w = 2.25 * Config.charKeyWidth;
             tempKey = new SoftKey(Key.LeftShift, "Shift", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
             //line3
@@ -104,6 +133,10 @@ namespace Keyboard
             {
                 tempKey = new SoftKey(Config.line3Key[i], Config.line3UpChar[i], Config.line3DownChar[i], pX, pY, w, h);
                 this.allKeys.Add(tempKey);
+                if (i > 6)
+                {
+                    this.nonCharKeys.Add(tempKey);
+                }
                 this.canvas.Children.Add(tempKey.key);
                 pX += (w + Config.keyInterval);
             }
@@ -111,6 +144,7 @@ namespace Keyboard
             w = 2.25 * Config.charKeyWidth + 2 * Config.keyInterval;
             tempKey = new SoftKey(Key.RightShift, "Shift", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             //LCtrlKey
             pX = Config.keyInterval;
@@ -118,72 +152,131 @@ namespace Keyboard
             w = 1.25 * Config.charKeyWidth;
             tempKey = new SoftKey(Key.LeftCtrl, "Ctrl", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
             //LWinKey
             w = 1.25 * Config.charKeyWidth;
             tempKey = new SoftKey(Key.LWin, "Win", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
             //LAltKey
             w = 1.25 * Config.charKeyWidth;
             tempKey = new SoftKey(Key.LeftAlt, "Alt", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
             //SpaceBar
             w = 5.75 * Config.charKeyWidth + 6 * Config.keyInterval;
             tempKey = new SoftKey(Key.Space, "", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            //this.nonCharKeys.Add(tempKey);
+            this.spacebarKey = tempKey;
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
             //RAltKey
             w = 1.25 * Config.charKeyWidth;
             tempKey = new SoftKey(Key.RightAlt, "Alt", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
             //RWinKey
             w = 1.25 * Config.charKeyWidth;
             tempKey = new SoftKey(Key.RWin, "Win", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
             //MenuKey
             w = 1.25 * Config.charKeyWidth;
             tempKey = new SoftKey(Key.Apps, "⿳", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
             //RCtrlKey
             w = 1.25 * Config.charKeyWidth;
             tempKey = new SoftKey(Key.RightCtrl, "Ctrl", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
         }
 
         public void touchDown(Point pos)
         {
-            for (int i = 0; i < this.allKeys.Count; i++)
+            if (Config.predictAlgorithm == PredictAlgorithms.None)
             {
-                if (this.allKeys[i].contains(pos))
+                //plain input
+                for (int i = 0; i < this.allKeys.Count; i++)
                 {
-                    this.allKeys[i].press();
-                    break;
+                    if (this.allKeys[i].contains(pos))
+                    {
+                        this.allKeys[i].press();
+                        break;
+                    }
                 }
             }
+            else {
+                //using predict
+                for (int i = 0; i < this.nonCharKeys.Count; i++)
+                {
+                    if (this.nonCharKeys[i].contains(pos))
+                    {
+                        this.nonCharKeys[i].press();
+                        return;
+                    }
+                }
+                if (this.backspaceKey.contains(pos))
+                {
+                    wordPredictor.delete();
+                    return;
+                }
+                if (this.spacebarKey.contains(pos))
+                {
+                    wordPredictor.space();
+                    return;
+                }
+                for (int i=0; i< this.numKeys.Count; i++)
+                {
+                    if (this.numKeys[i].contains(pos))
+                    {
+                        wordPredictor.select(i);
+                        return;
+                    }
+                }
+                wordPredictor.type(pos);
+            }
+
         }
 
         public void touchUp(Point pos)
         {
-            for (int i = 0; i < this.allKeys.Count; i++)
+            if (Config.predictAlgorithm == PredictAlgorithms.None)
             {
-                if (this.allKeys[i].contains(pos))
+                //plain input
+                for (int i = 0; i < this.allKeys.Count; i++)
                 {
-                    this.allKeys[i].release();
-                    break;
+                    if (this.allKeys[i].contains(pos))
+                    {
+                        this.allKeys[i].release();
+                        break;
+                    }
+                }
+            }
+            else {
+                //using predict
+                for (int i = 0; i < this.nonCharKeys.Count; i++)
+                {
+                    if (this.nonCharKeys[i].contains(pos))
+                    {
+                        this.nonCharKeys[i].release();
+                        return;
+                    }
                 }
             }
 

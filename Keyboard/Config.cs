@@ -12,12 +12,33 @@ using System.Windows.Media;
 
 namespace Keyboard
 {
+    enum PredictAlgorithms { None, Absolute, Relative };
     static class Config
     {
+        //?????
+        public static Dictionary<char, double> keyPosX = new Dictionary<char, double>();
+        public static Dictionary<char, double> keyPosY = new Dictionary<char, double>();
+
+
+        //
+        public static int hintBlockNum = 5;
+        public static double hintBlockWidth = 150;
+        public static double hintBlockHeight = 40;
+        public static double hintBlockInterval = 10;
+        public static Brush hintBlockBackground = Brushes.Red;
+
+        public static PredictAlgorithms predictAlgorithm = PredictAlgorithms.Absolute;
         public static bool isWindowFullScreen = false;
         public static Brush windowBackgroundColor = Brushes.Black;
-        public static Brush mainCanvasBackgroundColor = Brushes.Green;
+        public static Brush configCanvasBackgroundColor = Brushes.Green;
+        public static Brush inputCanvasBackgroundColor = Brushes.Green;
         public static bool isPractice = true;
+
+        public static bool showTask = true;
+        
+
+
+
 
         public static double charKeyWidth = 80;
         public static double charKeyHeight = 80;
