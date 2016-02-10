@@ -67,15 +67,13 @@ namespace Keyboard
                 Directory.CreateDirectory(dir);
             }
             string fileName = taskStartTime.ToString("MM_dd_HH_mm_ss") + ".txt";
-            if (sw == null)
-            {
-                sw = new StreamWriter(dir + "\\" + fileName, true);
-            }
+            sw = new StreamWriter(dir + "\\" + fileName, true);
             foreach(LogRecord log in logList)
             {
                 sw.WriteLine(log.ToString());
             }
             sw.Close();
+            logList.Clear();
         }
     }
 }

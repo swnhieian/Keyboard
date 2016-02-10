@@ -42,7 +42,11 @@ namespace Keyboard
                 hintBlocks[i].Width = Config.hintBlockWidth;
                 hintBlocks[i].Height = Config.hintBlockHeight;
                 hintBlocks[i].Background = Config.hintBlockBackground;
-                Canvas.SetLeft(hintBlocks[i], i * Config.hintBlockWidth + (i - 1) * Config.hintBlockInterval);
+                hintBlocks[i].FontSize = Config.hintBlockFontSize;
+                hintBlocks[i].Foreground = Config.hintBlockForeground;
+                hintBlocks[i].HorizontalAlignment = HorizontalAlignment.Center;
+                hintBlocks[i].VerticalAlignment = VerticalAlignment.Center;
+                Canvas.SetLeft(hintBlocks[i], i * Config.hintBlockWidth + i * Config.hintBlockInterval);
                 hintBlocks[i].TouchDown += new EventHandler<TouchEventArgs>((a, b) =>
                 {
                     TextBlock tb = b.Source as TextBlock;

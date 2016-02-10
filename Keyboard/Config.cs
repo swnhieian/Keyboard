@@ -24,10 +24,25 @@ namespace Keyboard
 
 
         public static int hintBlockNum = 5;
-        public static double hintBlockWidth = 150;
-        public static double hintBlockHeight = 40;
+        public static double hintBlockWidth = 200;
+        public static double hintBlockHeight = 50;
         public static double hintBlockInterval = 10;
         public static Brush hintBlockBackground = Brushes.Red;
+        public static double hintBlockFontSize = 25;
+        public static Brush hintBlockForeground = Brushes.White;
+
+        public static double taskInputBlockWidth = 800;
+        public static double taskInputBlockHeight = 50;
+        public static Brush taskInputBlockBackground = Brushes.White;
+        public static Brush taskInputBlockForeground = Brushes.Black;
+        public static double taskInputBlockFontSize = 25;
+
+        public static double taskTextBlockWidth = 800;
+        public static double taskTextBlockHeith = 50;
+        public static Brush taskTextBlockBackground = Brushes.Blue;
+        public static Brush taskTextBlockForeground = Brushes.Black;
+        public static double taskTextBlockFontSize = 25;
+
 
         public static PredictAlgorithms predictAlgorithm = PredictAlgorithms.Absolute;
         public static bool isWindowFullScreen = false;

@@ -6,14 +6,14 @@
         xmlns:local="clr-namespace:Keyboard"
         mc:Ignorable="d"
         Title="MainWindow" Height="798.4" Width="1679.6">
-    <Grid Canvas.Left="0" Canvas.Top="0" Margin="0,0,30.6,-0.2">
+    <Grid Name="mainGrid" Canvas.Left="0" Canvas.Top="0" Margin="0,0,30.6,-0.2">
         <Canvas x:Name="configCanvas" HorizontalAlignment="Left" Height="318" Margin="1333,398,0,0" VerticalAlignment="Top" Width="195" MouseDown="configCanvas_MouseDown" PreviewKeyDown="configCanvas_PreviewKeyDown">
             <Button x:Name="practiceButton" Content="Button" Canvas.Left="61" Canvas.Top="53" Width="75" Click="practiceButton_Click"/>
             <CheckBox x:Name="showTaskCheckBox" Content="显示任务" Canvas.Left="68" Canvas.Top="122" Checked="showTaskCheckBox_Checked" Unchecked="showTaskCheckBox_Unchecked" IsChecked="True"/>
         </Canvas>
-        <Canvas x:Name="softKeyboardCanvas" Height="428" Canvas.Top="526" PreviewTouchDown="softKeyboardCanvas_PreviewTouchDown" PreviewTouchUp="softKeyboardCanvas_PreviewTouchUp" PreviewMouseDown="softKeyboardCanvas_PreviewMouseDown" Canvas.Left="327" Margin="45,333,210,8"/>
+        <Canvas Name="softKeyboardCanvas" Height="428" Canvas.Top="526" PreviewTouchDown="softKeyboardCanvas_PreviewTouchDown" PreviewTouchUp="softKeyboardCanvas_PreviewTouchUp" PreviewMouseDown="softKeyboardCanvas_PreviewMouseDown" Canvas.Left="327" Margin="45,333,210,8"/>
         <Canvas Name="inputCanvas" HorizontalAlignment="Left" Height="271" Margin="10,10,0,0" VerticalAlignment="Top" Width="1623">
-            <TextBox x:Name="inputTextBox" Height="66" Canvas.Left="110" TextWrapping="Wrap" Text="TextBox" Canvas.Top="92" Width="677" PreviewKeyDown="inputTextBox_PreviewKeyDown"/>
+            <TextBox Name="inputTextBox" Height="66" Canvas.Left="110" TextWrapping="Wrap" Text="TextBox" Canvas.Top="92" Width="677" PreviewKeyDown="inputTextBox_PreviewKeyDown"/>
         </Canvas>
     </Grid>
 </Window>
