@@ -23,6 +23,7 @@ namespace Keyboard
         string wordFreqName = "../../Resources/wordFreq.json";
         string lenSetName = "../../Resources/lenSet.json";
         public bool isControlKeyOn = false;
+        Tasks tasks;
         Canvas canvas;
         SoftKeyboard keyboard;
         List<Point> pointList;
@@ -53,6 +54,11 @@ namespace Keyboard
                 Canvas.SetTop(hintBlocks[i], -Config.hintBlockHeight);
                 this.canvas.Children.Add(hintBlocks[i]);
             }
+        }
+
+        public void setTasks(Tasks task)
+        {
+            this.tasks = task;
         }
 
 
@@ -97,6 +103,7 @@ namespace Keyboard
             {
                 Simulator.Type(Key.Back);
             }
+            tasks.delete();
         }
         public void space()
         {
@@ -107,6 +114,7 @@ namespace Keyboard
             } else
             {
                 Simulator.Type(Key.Space);
+                tasks.type();
             }            
         }
         public void select(int num, bool isTouchTrigger = false)
@@ -127,6 +135,7 @@ namespace Keyboard
         { 
             Console.WriteLine("Type:" + pos.X + "," + pos.Y);
             pointList.Add(pos);
+            tasks.type();
             updateHintBlocks();            
         }
         private void updateHintBlocks()
@@ -146,7 +155,16 @@ namespace Keyboard
             {
                 hintBlocks[i].Text = predictWords[i].Key;
             }
-
+        }
+        public string getPredictHints()
+        {
+            string str = "";
+            for (int i=0; i<Config.hintBlockNum-1; i++)
+            {
+                str += (hintBlocks[i].Text + ":");
+            }
+            str += (hintBlocks[Config.hintBlockNum - 1].Text);
+            return str;
         }
     }
 }

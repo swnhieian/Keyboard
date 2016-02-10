@@ -21,6 +21,8 @@ namespace Keyboard
 
 
         //
+
+
         public static int hintBlockNum = 5;
         public static double hintBlockWidth = 150;
         public static double hintBlockHeight = 40;

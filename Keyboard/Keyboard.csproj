@@ -65,6 +65,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Log.cs" />
+    <Compile Include="LogRecord.cs" />
     <Compile Include="Probility.cs" />
     <Compile Include="Simulator.cs" />
     <Compile Include="SoftKey.cs" />

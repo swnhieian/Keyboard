@@ -40,14 +40,15 @@ namespace Keyboard
         private SoftKeyboard softKeyboard;
         private Tasks task;
         private TextBlock taskTextBlock;
+        private Log log;
         //临时变量
         Rectangle r;
         public MainWindow()
         {
-
             InitializeComponent();
             initializeWindow();
             initializeVars();
+            inputTextBox.Focus();
         }
         protected override void OnActivated(EventArgs e)
         {
@@ -73,12 +74,15 @@ namespace Keyboard
         }
         private void initializeVars()
         {
-            this.softKeyboard = new SoftKeyboard(this.softKeyboardCanvas);
+            this.log = new Log();
+            this.softKeyboard = new SoftKeyboard(this.softKeyboardCanvas, this.log);
             this.taskTextBlock = new TextBlock();
             this.inputCanvas.Children.Add(this.taskTextBlock);
             this.taskTextBlock.Visibility = Config.showTask?Visibility.Visible:Visibility.Hidden;
             this.taskTextBlock.Text = "task";
             this.task = new Tasks(this.taskTextBlock, this.inputTextBox);
+            this.log.setTasks(this.task);
+            this.softKeyboard.setTasks(this.task);
         }
 
         
@@ -109,14 +113,16 @@ namespace Keyboard
         private void practiceButton_Click(object sender, RoutedEventArgs e)
         {
             Config.isPractice = !Config.isPractice;
+            Button b = sender as Button;
+            b.Content = Config.isPractice.ToString();
         }
 
         private void softKeyboardCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-           /* Point pos = e.GetPosition(this.softKeyboardCanvas);
+            Point pos = e.GetPosition(this.softKeyboardCanvas);
             this.softKeyboard.touchDown(pos);
             this.softKeyboard.touchUp(pos);
-            e.Handled = true;*/
+            e.Handled = true;
 
         }
 
@@ -160,6 +166,7 @@ namespace Keyboard
             if (e.Key == Key.Enter)
             {
                 this.task.gotoNext();
+                log.saveLogs();
                 e.Handled = true;
             }
 

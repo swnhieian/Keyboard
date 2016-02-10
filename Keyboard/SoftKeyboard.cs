@@ -21,16 +21,22 @@ namespace Keyboard
         private SoftKey spacebarKey;
         private List<SoftKey> numKeys;
         private WordPredictor wordPredictor;
+        private Log log;
         //
         public Key numKey(int index)
         {
             return this.numKeys[index].keyValue;
         }
-        public SoftKeyboard(Canvas canvas)
+        public SoftKeyboard(Canvas canvas, Log log)
         {
             this.canvas = canvas;
+            this.log = log;
             initilizeVars();
             renderKeyboard();
+        }
+        public void setTasks(Tasks task)
+        {
+            this.wordPredictor.setTasks(task);
         }
         private void initilizeVars()
         {
@@ -38,6 +44,7 @@ namespace Keyboard
             this.nonCharKeys = new List<SoftKey>();
             this.numKeys = new List<SoftKey>();
             this.wordPredictor = new WordPredictor(this);
+            this.log.setWordPredictor(this.wordPredictor);
         }
         private void renderKeyboard()
         {
@@ -236,19 +243,22 @@ namespace Keyboard
                         if (this.nonCharKeys[i].isControlKey)
                         {
                             wordPredictor.isControlKeyOn = true;
-                        }
+                        }                        
                         this.nonCharKeys[i].press();
+                        log.addLog(LogType.RawInput, pos, this.nonCharKeys[i].keyValue);
                         return;
                     }
                 }
                 if (this.backspaceKey.contains(pos))
                 {
                     wordPredictor.delete();
+                    log.addLog(LogType.Delete, pos, this.backspaceKey.keyValue);
                     return;
                 }
                 if (this.spacebarKey.contains(pos))
                 {
                     wordPredictor.space();
+                    log.addLog(LogType.Space, pos, this.spacebarKey.keyValue);
                     return;
                 }
                 for (int i=0; i< this.numKeys.Count; i++)
@@ -256,10 +266,12 @@ namespace Keyboard
                     if (this.numKeys[i].contains(pos))
                     {
                         wordPredictor.select(i);
+                        log.addLog(LogType.Select, pos, this.numKeys[i].keyValue);
                         return;
                     }
                 }
                 wordPredictor.type(pos);
+                log.addLog(LogType.Type, pos);
             }
 
         }
