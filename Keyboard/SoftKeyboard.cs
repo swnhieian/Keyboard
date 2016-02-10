@@ -229,6 +229,7 @@ namespace Keyboard
                     if (this.allKeys[i].contains(pos))
                     {
                         this.allKeys[i].press();
+                        //log.addLog(LogType.RawInput, pos, this.allKeys[i].keyValue);
                         break;
                     }
                 }
