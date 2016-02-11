@@ -49,7 +49,7 @@ namespace Keyboard
         public static Brush windowBackgroundColor = Brushes.Black;
         public static Brush configCanvasBackgroundColor = Brushes.Green;
         public static Brush inputCanvasBackgroundColor = Brushes.Green;
-        public static bool isPractice = true;
+        public static bool isPractice = false;
 
         public static bool showTask = true;
         
@@ -102,7 +102,7 @@ namespace Keyboard
         };
         public static Key[] line3Key =
        {
-            Key.Z, Key.X, Key.C, Key.V, Key.B, Key.N, Key.M, Key.OemComma, Key.Decimal, Key.OemQuestion
+            Key.Z, Key.X, Key.C, Key.V, Key.B, Key.N, Key.M, Key.OemComma, Key.OemPeriod, Key.OemQuestion
         };
         public static string[] line3UpChar =
         {

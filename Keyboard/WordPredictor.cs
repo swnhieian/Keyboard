@@ -164,9 +164,16 @@ namespace Keyboard
                     raw += keyboard.getClosestChar(p);
                 }
                 hintBlocks[0].Text = raw;
-                for (int i=0; i< num; i++)
+                int hintIndex = 0;
+                int wordIndex = 0;
+                while (hintIndex < num)
                 {
-                    hintBlocks[i + 1].Text = predictWords[i].Key;
+                    if (predictWords[wordIndex].Key != raw)
+                    {
+                        hintBlocks[hintIndex+1].Text = predictWords[wordIndex].Key;
+                        hintIndex++;
+                    }
+                    wordIndex++;
                 }
             } else
             {
