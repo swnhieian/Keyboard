@@ -121,6 +121,19 @@ namespace Keyboard
                 tasks.type();
             }            
         }
+        public void enter()
+        {
+            Console.WriteLine("Enter");
+            if (pointList.Count > 0)
+            {
+                select(0);
+            }
+            else
+            {
+                Simulator.Type(Key.Enter);
+                //tasks.type();
+            }
+        }
         public void select(int num, bool isTouchTrigger = false)
         {
             Console.WriteLine("Select:" + num);

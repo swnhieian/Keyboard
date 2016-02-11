@@ -46,7 +46,7 @@ namespace Keyboard
 
         public static PredictAlgorithms predictAlgorithm = PredictAlgorithms.Absolute;
         public static bool isWindowFullScreen = false;
-        public static Brush windowBackgroundColor = Brushes.Black;
+        public static Brush windowBackgroundColor = Brushes.Gray;
         public static Brush configCanvasBackgroundColor = Brushes.Green;
         public static Brush inputCanvasBackgroundColor = Brushes.Green;
         public static bool isPractice = false;

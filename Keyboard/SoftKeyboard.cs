@@ -19,6 +19,7 @@ namespace Keyboard
         private List<SoftKey> nonCharKeys;
         private SoftKey backspaceKey;
         private SoftKey spacebarKey;
+        private SoftKey enterKey;
         private List<SoftKey> numKeys;
         private WordPredictor wordPredictor;
         private Log log;
@@ -130,7 +131,8 @@ namespace Keyboard
             w = 1.75 * Config.charKeyWidth + Config.keyInterval;
             tempKey = new SoftKey(Key.Enter, "Enter", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
-            this.nonCharKeys.Add(tempKey);
+            //this.nonCharKeys.Add(tempKey);
+            this.enterKey = tempKey;
             this.canvas.Children.Add(tempKey.key);
             //LShiftKey
             pX = Config.keyInterval;
@@ -282,6 +284,12 @@ namespace Keyboard
                 {
                     wordPredictor.space();
                     log.addLog(LogType.Space, pos, this.spacebarKey.keyValue);
+                    return;
+                }
+                if (this.enterKey.contains(pos))
+                {
+                    wordPredictor.enter();
+                    log.addLog(LogType.Enter, pos, this.enterKey.keyValue);
                     return;
                 }
                 for (int i=0; i< this.numKeys.Count; i++)

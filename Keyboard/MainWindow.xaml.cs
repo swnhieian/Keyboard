@@ -65,7 +65,8 @@ namespace Keyboard
             this.WindowState = WindowState.Maximized;
             //this.ResizeMode = ResizeMode.NoResize;
             this.Topmost = true;
-            this.WindowStyle = Config.isWindowFullScreen ? WindowStyle.None : WindowStyle.SingleBorderWindow;
+            //this.WindowStyle = Config.isWindowFullScreen ? WindowStyle.None : WindowStyle.SingleBorderWindow;
+            this.WindowStyle = WindowStyle.None;
             //设定背景颜色
             this.Background = Config.windowBackgroundColor;
             this.configCanvas.Background = Config.configCanvasBackgroundColor;
@@ -135,11 +136,20 @@ namespace Keyboard
             if (Config.isPractice)
             {
                 this.WindowState = WindowState.Normal;
+                //this.WindowStyle = WindowStyle.None;
                 this.Height = softKeyboardCanvas.Height + Config.hintBlockHeight + 50;
                 this.inputCanvas.Visibility = Visibility.Hidden;
                 this.softKeyboardCanvas.Margin = new Thickness(0, Config.hintBlockHeight+5, 0, 0);
+                //this.Opacity = 0;
+                this.Background = Brushes.Transparent;
+                this.mainGrid.Background = Brushes.Transparent;
+                this.Opacity = 0.8;
+                this.Left = 0;
+                this.Top = System.Windows.SystemParameters.PrimaryScreenHeight - this.Height;
             } else
             {
+                this.Background = Config.windowBackgroundColor;
+                this.Opacity = 1;
                 this.WindowState = WindowState.Maximized;
                 this.inputCanvas.Visibility = Visibility.Visible;
                 this.softKeyboardCanvas.Margin = new Thickness(0, inputCanvas.Height+80, 0, 0);
@@ -200,6 +210,21 @@ namespace Keyboard
                 e.Handled = true;
             }
 
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void ComboBoxItem_Selected(object sender, RoutedEventArgs e)
+        {
+            Config.predictAlgorithm = PredictAlgorithms.None;
+        }
+
+        private void ComboBoxItem_Selected_1(object sender, RoutedEventArgs e)
+        {
+            Config.predictAlgorithm = PredictAlgorithms.Absolute;
         }
     }
 }

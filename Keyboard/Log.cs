@@ -19,7 +19,7 @@ using System.IO;
 
 namespace Keyboard
 {
-    enum LogType { Type, RawInput, Delete, Space, GotoNext, Select};
+    enum LogType { Type, RawInput, Delete, Space, Enter, Select};
     class Log
     {
         private DateTime taskStartTime;
