@@ -195,6 +195,7 @@ namespace Keyboard
             if (e.Key == Key.Enter)
             {
                 this.task.gotoNext();
+                this.softKeyboard.resetWordPredictor();
                 log.saveLogs();
                 e.Handled = true;
             }

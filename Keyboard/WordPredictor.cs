@@ -154,11 +154,27 @@ namespace Keyboard
             }
             List<KeyValuePair<string, double>> predictWords = predict();
             int num = Config.hintBlockNum;
-            if (predictWords.Count < num) num = predictWords.Count;
-            for (int i=0; i<num; i++)
+            if (predictWords.Count < num) num = predictWords.Count;            
+            if (Config.isPractice)
             {
-                hintBlocks[i].Text = predictWords[i].Key;
-            }
+                num--;
+                string raw = "";
+                foreach(Point p in pointList)
+                {
+                    raw += keyboard.getClosestChar(p);
+                }
+                hintBlocks[0].Text = raw;
+                for (int i=0; i< num; i++)
+                {
+                    hintBlocks[i + 1].Text = predictWords[i].Key;
+                }
+            } else
+            {
+                for (int i = 0; i < num; i++)
+                {
+                    hintBlocks[i].Text = predictWords[i].Key;
+                }
+            }            
         }
         public string getPredictHints()
         {

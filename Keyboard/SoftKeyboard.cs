@@ -38,6 +38,10 @@ namespace Keyboard
         {
             this.wordPredictor.setTasks(task);
         }
+        public void resetWordPredictor()
+        {
+            this.wordPredictor.reset();
+        }
         private void initilizeVars()
         {
             this.allKeys = new List<SoftKey>();
@@ -216,6 +220,24 @@ namespace Keyboard
             this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
+        }
+
+        public string getClosestChar(Point pos)
+        {
+            double dist = Double.PositiveInfinity;
+            string ret = "";
+            for (char c = 'a'; c <= 'z'; c++)
+            {
+                double tempd = Math.Pow(Config.keyPosX[c] - pos.X, 2);
+                tempd += Math.Pow(Config.keyPosY[c] - pos.Y, 2);
+                tempd = Math.Sqrt(tempd);
+                if (tempd < dist)
+                {
+                    dist = tempd;
+                    ret = c.ToString();
+                }
+            }
+            return ret;
         }
 
         public void touchDown(Point pos)

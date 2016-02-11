@@ -56,7 +56,7 @@ namespace Keyboard
             record.setDest(this.tasks.getCurrentDest());
             record.setKey(rawKey);
             record.setPredictHints(this.wordPredictor.getPredictHints());
-
+            record.setInclinometerReading(this.inclinometer.GetCurrentReading());
             this.logList.Add(record);
         }
         public void saveLogs(string userId = "test")

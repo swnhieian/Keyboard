@@ -15,6 +15,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 
+using Windows.Devices.Sensors;
+
 
 namespace Keyboard
 {
@@ -27,6 +29,7 @@ namespace Keyboard
         string dest;
         Key rawKey;
         string predictHints;
+        double inclinometer_x, inclinometer_y, inclinometer_z;
         public LogRecord(LogType logType, Point pos)
         {
             this.type = logType;
@@ -51,11 +54,18 @@ namespace Keyboard
         {
             this.predictHints = hints;
         }
+        public void setInclinometerReading(InclinometerReading reading)
+        {
+            this.inclinometer_x = reading.PitchDegrees;
+            this.inclinometer_y = reading.RollDegrees;
+            this.inclinometer_z = reading.YawDegrees;
+        }
         public override string ToString()
         {
             string str = "";
-            str += (time.Subtract(startTime).TotalMilliseconds.ToString());
+            str += (time.Subtract(startTime).TotalMilliseconds.ToString()+",");
             str += (type.ToString() + "," + pos.X + "," + pos.Y + "," + dest + "," + rawKey.ToString() + "," + predictHints);
+            str += ("," + inclinometer_x + "," + inclinometer_y + "," + inclinometer_z);
             return str;
         }
     }
