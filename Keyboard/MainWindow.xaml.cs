@@ -73,7 +73,33 @@ namespace Keyboard
             this.inputCanvas.Background = Config.inputCanvasBackgroundColor;
             //
             this.softKeyboardCanvas.Width = 14.5 * Config.charKeyWidth + 15 * Config.keyInterval;
-            this.softKeyboardCanvas.Height = 5 * Config.charKeyWidth + 6 * Config.keyInterval;
+            this.softKeyboardCanvas.Height = 5 * Config.charKeyHeight + 6 * Config.keyInterval;
+            //this.softKeyboardCanvas.Margin = new Thickness(0, Config.hintBlockHeight + Config.keyInterval, 0, 0);
+            this.softKeyboardCanvas.Margin = new Thickness(Config.hintBlockHeight + Config.keyInterval);
+            if (Config.isPractice)
+            {
+                this.WindowState = WindowState.Normal;
+                //this.WindowStyle = WindowStyle.None;
+                this.Height = softKeyboardCanvas.Height + Config.hintBlockHeight + 50;
+                this.inputCanvas.Visibility = Visibility.Hidden;
+                //this.softKeyboardCanvas.Margin = new Thickness(0, Config.hintBlockHeight+5, 0, 0);
+                Grid.SetRow(this.softKeyboardCanvas, 0);
+                //this.Opacity = 0;
+                this.Background = Brushes.Transparent;
+                this.mainGrid.Background = Brushes.Transparent;
+                this.Opacity = 0.8;
+                this.Left = 0;
+                this.Top = System.Windows.SystemParameters.PrimaryScreenHeight - this.Height;
+            }
+            else
+            {
+                this.Background = Config.windowBackgroundColor;
+                this.Opacity = 1;
+                this.WindowState = WindowState.Maximized;
+                this.inputCanvas.Visibility = Visibility.Visible;
+                Grid.SetRow(this.softKeyboardCanvas, 1);
+                //this.softKeyboardCanvas.Margin = new Thickness(0, inputCanvas.Height+80, 0, 0);
+            }
 
         }
         private void initializeVars()
@@ -133,27 +159,8 @@ namespace Keyboard
             Config.isPractice = !Config.isPractice;
             Button b = sender as Button;
             b.Content = Config.isPractice.ToString();
-            if (Config.isPractice)
-            {
-                this.WindowState = WindowState.Normal;
-                //this.WindowStyle = WindowStyle.None;
-                this.Height = softKeyboardCanvas.Height + Config.hintBlockHeight + 50;
-                this.inputCanvas.Visibility = Visibility.Hidden;
-                this.softKeyboardCanvas.Margin = new Thickness(0, Config.hintBlockHeight+5, 0, 0);
-                //this.Opacity = 0;
-                this.Background = Brushes.Transparent;
-                this.mainGrid.Background = Brushes.Transparent;
-                this.Opacity = 0.8;
-                this.Left = 0;
-                this.Top = System.Windows.SystemParameters.PrimaryScreenHeight - this.Height;
-            } else
-            {
-                this.Background = Config.windowBackgroundColor;
-                this.Opacity = 1;
-                this.WindowState = WindowState.Maximized;
-                this.inputCanvas.Visibility = Visibility.Visible;
-                this.softKeyboardCanvas.Margin = new Thickness(0, inputCanvas.Height+80, 0, 0);
-            }
+            initializeWindow();
+            this.softKeyboard.reRenderHintBlocks();            
         }
 
         private void softKeyboardCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)

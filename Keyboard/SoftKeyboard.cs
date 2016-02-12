@@ -43,6 +43,10 @@ namespace Keyboard
         {
             this.wordPredictor.reset();
         }
+        public void reRenderHintBlocks()
+        {
+            this.wordPredictor.reRenderHintBlocks();
+        }
         private void initilizeVars()
         {
             this.allKeys = new List<SoftKey>();

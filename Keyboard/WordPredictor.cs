@@ -36,7 +36,20 @@ namespace Keyboard
             loadCorpus();
             pointList = new List<Point>();
             hintBlocks = new TextBlock[Config.hintBlockNum];
-            for (int i =0; i<Config.hintBlockNum; i++)
+            this.reRenderHintBlocks();
+            
+        }
+
+        public void reRenderHintBlocks()
+        {
+            for (int i=0; i<Config.hintBlockNum; i++)
+            {
+                if (hintBlocks[i] != null)
+                {
+                    this.canvas.Children.Remove(hintBlocks[i]);
+                }
+            }
+            for (int i = 0; i < Config.hintBlockNum; i++)
             {
                 hintBlocks[i] = new TextBlock();
                 hintBlocks[i].Width = Config.hintBlockWidth;
