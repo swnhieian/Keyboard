@@ -14,6 +14,7 @@
             <ComboBox x:Name="comboBox" Canvas.Left="68" Canvas.Top="110" Width="81">
                 <ComboBoxItem Selected="ComboBoxItem_Selected">None</ComboBoxItem>
                 <ComboBoxItem Selected="ComboBoxItem_Selected_1" IsSelected="True">Absolute</ComboBoxItem>
+                <ComboBoxItem Selected="ComboBoxItem_Selected_2">CollectData</ComboBoxItem>
             </ComboBox>
         </Canvas>
         <Canvas Name="softKeyboardCanvas" Height="428" Canvas.Top="526" PreviewTouchDown="softKeyboardCanvas_PreviewTouchDown" PreviewTouchUp="softKeyboardCanvas_PreviewTouchUp" PreviewMouseDown="softKeyboardCanvas_PreviewMouseDown" Canvas.Left="327" Margin="10,333,244.9,10.2"/>

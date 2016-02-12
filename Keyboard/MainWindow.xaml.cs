@@ -226,5 +226,10 @@ namespace Keyboard
         {
             Config.predictAlgorithm = PredictAlgorithms.Absolute;
         }
+
+        private void ComboBoxItem_Selected_2(object sender, RoutedEventArgs e)
+        {
+            Config.predictAlgorithm = PredictAlgorithms.CollectData;
+        }
     }
 }

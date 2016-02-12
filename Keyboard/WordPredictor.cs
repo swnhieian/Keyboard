@@ -151,9 +151,17 @@ namespace Keyboard
         public void type(Point pos)
         { 
             Console.WriteLine("Type:" + pos.X + "," + pos.Y);
-            pointList.Add(pos);
-            tasks.type();
-            updateHintBlocks();            
+            if (Config.predictAlgorithm == PredictAlgorithms.CollectData)
+            {
+                string ch = keyboard.getClosestChar(pos);
+                tasks.type();
+                Simulator.Type(ch);
+            } else
+            {
+                pointList.Add(pos);
+                tasks.type();
+                updateHintBlocks();
+            }                        
         }
         private void updateHintBlocks()
         {
