@@ -41,7 +41,7 @@ namespace Keyboard
             this.inclinometer = Inclinometer.GetDefault();
             this.gyrometer = Gyrometer.GetDefault();
             this.orientationSensor = OrientationSensor.GetDefault();
-        }
+        }   
         public void setTasks(Tasks tasks)
         {
             this.tasks = tasks;
