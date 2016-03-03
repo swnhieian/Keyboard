@@ -12,7 +12,7 @@ using System.Windows.Media;
 
 namespace Keyboard
 {
-    enum PredictAlgorithms { None, Absolute, Relative };
+    enum PredictAlgorithms { None, Absolute, Relative, CollectData };
     static class Config
     {
         public static string userName = "test";

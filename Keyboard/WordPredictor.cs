@@ -36,7 +36,20 @@ namespace Keyboard
             loadCorpus();
             pointList = new List<Point>();
             hintBlocks = new TextBlock[Config.hintBlockNum];
-            for (int i =0; i<Config.hintBlockNum; i++)
+            this.reRenderHintBlocks();
+            
+        }
+
+        public void reRenderHintBlocks()
+        {
+            for (int i=0; i<Config.hintBlockNum; i++)
+            {
+                if (hintBlocks[i] != null)
+                {
+                    this.canvas.Children.Remove(hintBlocks[i]);
+                }
+            }
+            for (int i = 0; i < Config.hintBlockNum; i++)
             {
                 hintBlocks[i] = new TextBlock();
                 hintBlocks[i].Width = Config.hintBlockWidth;
@@ -151,9 +164,17 @@ namespace Keyboard
         public void type(Point pos)
         { 
             Console.WriteLine("Type:" + pos.X + "," + pos.Y);
-            pointList.Add(pos);
-            tasks.type();
-            updateHintBlocks();            
+            if (Config.predictAlgorithm == PredictAlgorithms.CollectData)
+            {
+                string ch = keyboard.getClosestChar(pos);
+                tasks.type();
+                Simulator.Type(ch);
+            } else
+            {
+                pointList.Add(pos);
+                tasks.type();
+                updateHintBlocks();
+            }                        
         }
         private void updateHintBlocks()
         {
