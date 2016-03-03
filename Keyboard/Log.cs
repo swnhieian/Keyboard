@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 
 using Windows.Devices.Sensors;
 using System.IO;
+using NAudio.Wave;
 
 namespace Keyboard
 {
@@ -31,16 +32,26 @@ namespace Keyboard
         Gyrometer gyrometer;
         OrientationSensor orientationSensor;
         private StreamWriter sw;
+        private string logDir;
+
+        private WaveFileWriter waveFileWriter;
+        private WaveIn waveIn;
 
         public Log()
         {
             taskStartTime = DateTime.Now;
+            startRecording();
             LogRecord.startTime = taskStartTime;
             logList = new List<LogRecord>();
             this.accelerometer = Accelerometer.GetDefault();
             this.inclinometer = Inclinometer.GetDefault();
             this.gyrometer = Gyrometer.GetDefault();
             this.orientationSensor = OrientationSensor.GetDefault();
+            logDir = Directory.GetCurrentDirectory() + "\\logs\\" + Config.userName;
+            if (!Directory.Exists(logDir))
+            {
+                Directory.CreateDirectory(logDir);
+            }
         }
         public void setTasks(Tasks tasks)
         {
@@ -59,15 +70,10 @@ namespace Keyboard
             record.setInclinometerReading(this.inclinometer.GetCurrentReading());
             this.logList.Add(record);
         }
-        public void saveLogs(string userId = "test")
+        public void saveLogs()
         {
-            string dir = Directory.GetCurrentDirectory() + "\\logs\\" + userId;
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
             string fileName = taskStartTime.ToString("MM_dd_HH_mm_ss") + ".txt";
-            sw = new StreamWriter(dir + "\\" + fileName, true);
+            sw = new StreamWriter(logDir + "\\" + fileName, true);
             foreach(LogRecord log in logList)
             {
                 sw.WriteLine(log.ToString());
@@ -75,5 +81,46 @@ namespace Keyboard
             sw.Close();
             logList.Clear();
         }
+        private void startRecording()
+        {
+            if (waveIn != null) return;
+            string fileName = taskStartTime.ToString("MM_dd_HH_mm_ss") + ".wav";
+            waveIn = new WaveIn { WaveFormat = new WaveFormat(8000, 1) };
+            waveFileWriter = new WaveFileWriter(logDir + "\\" + fileName, waveIn.WaveFormat);
+            waveIn.DataAvailable += waveIn_DataAvailable;
+            waveIn.RecordingStopped += onRecordingStopped;
+            waveIn.StartRecording();
+        }
+        public void stopRecording()
+        {
+            if (waveIn != null)
+            {
+                waveIn.StopRecording();
+                waveIn.Dispose();
+            }
+        }
+        private void waveIn_DataAvailable(object sender, WaveInEventArgs e)
+        {
+            waveFileWriter.Write(e.Buffer, 0, e.BytesRecorded);
+            int secondsRecorded = (int)(waveFileWriter.Length / waveFileWriter.WaveFormat.AverageBytesPerSecond);
+        }
+        private void onRecordingStopped(object sender, StoppedEventArgs e)
+        {
+            if (waveIn != null)
+            {
+                waveIn.Dispose();
+                waveIn = null;
+            }
+            if (waveFileWriter != null)
+            {
+                waveFileWriter.Close();
+                waveFileWriter = null;
+            }
+            if (e.Exception != null)
+            {
+                MessageBox.Show(String.Format("录音出现问题 ｛0｝", e.Exception.Message));
+            }
+        }
+
     }
 }

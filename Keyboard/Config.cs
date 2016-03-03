@@ -15,6 +15,7 @@ namespace Keyboard
     enum PredictAlgorithms { None, Absolute, Relative };
     static class Config
     {
+        public static string userName = "test";
         //?????
         public static Dictionary<char, double> keyPosX = new Dictionary<char, double>();
         public static Dictionary<char, double> keyPosY = new Dictionary<char, double>();
