@@ -65,14 +65,160 @@ namespace Keyboard
             double w = Config.charKeyWidth;
             double h = Config.charKeyHeight;
             SoftKey tempKey;
-            for (int i=0; i< len; i++)
+            len = Config.newline1Key.Length;
+            for (int i = 0; i < len; i++)
+            {
+                tempKey = new SoftKey(Config.newline1Key[i], Config.newline1UpChar[i], Config.newline1DownChar[i], pX, pY, w, h);
+                this.allKeys.Add(tempKey);
+                this.canvas.Children.Add(tempKey.key);
+                pX += (w + Config.keyInterval);
+            }
+
+            //Backspace Key
+            tempKey = new SoftKey(Key.Back, "            ←", "Backspace", pX, pY, 2 * Config.charKeyWidth, Config.charKeyHeight);
+            this.allKeys.Add(tempKey);
+            //this.nonCharKeys.Add(tempKey);
+            this.backspaceKey = tempKey;
+            this.canvas.Children.Add(tempKey.key);
+            //line1
+            
+            //CapsLock
+            pX = Config.keyInterval;
+            pY += (Config.charKeyHeight + Config.keyInterval);
+            w = 1.75 * Config.charKeyWidth;
+            pX += (w + Config.keyInterval);
+            //line2
+            len = Config.newline2Key.Length;
+            w = Config.charKeyWidth;
+            for (int i = 0; i < len; i++)
+            {
+                tempKey = new SoftKey(Config.newline2Key[i], Config.newline2UpChar[i], Config.newline2DownChar[i], pX, pY, w, h);
+                this.allKeys.Add(tempKey);
+                if (i > 8)
+                {
+                    this.nonCharKeys.Add(tempKey);
+                }
+                this.canvas.Children.Add(tempKey.key);
+                pX += (w + Config.keyInterval);
+            }
+            //enterKey
+            w = 1.75 * Config.charKeyWidth + Config.keyInterval;
+            tempKey = new SoftKey(Key.Enter, "Enter", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            //this.nonCharKeys.Add(tempKey);
+            this.enterKey = tempKey;
+            this.canvas.Children.Add(tempKey.key);
+
+
+            //LShiftKey
+            pX = Config.keyInterval;
+            pY += (Config.charKeyHeight + Config.keyInterval);
+            w = 2.25 * Config.charKeyWidth;
+            tempKey = new SoftKey(Key.LeftShift, "Shift", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
+            this.canvas.Children.Add(tempKey.key);
+            pX += (w + Config.keyInterval);
+            //line3
+            len = Config.newline3Key.Length;
+            w = Config.charKeyWidth;
+            for (int i = 0; i < len; i++)
+            {
+                tempKey = new SoftKey(Config.newline3Key[i], Config.newline3UpChar[i], Config.newline3DownChar[i], pX, pY, w, h);
+                this.allKeys.Add(tempKey);
+                if (i > 6)
+                {
+                    this.nonCharKeys.Add(tempKey);
+                }
+                this.canvas.Children.Add(tempKey.key);
+                pX += (w + Config.keyInterval);
+            }
+            //RShiftKey
+            w = 2.25 * Config.charKeyWidth + 2 * Config.keyInterval;
+            tempKey = new SoftKey(Key.RightShift, "Shift", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
+            this.canvas.Children.Add(tempKey.key);
+            //LCtrlKey
+            pX = Config.keyInterval;
+            pY += (Config.charKeyHeight + Config.keyInterval);
+            w = 1.25 * Config.charKeyWidth;
+            tempKey = new SoftKey(Key.LeftCtrl, "Ctrl", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
+            this.canvas.Children.Add(tempKey.key);
+            pX += (w + Config.keyInterval);
+            //LWinKey
+            w = 1.25 * Config.charKeyWidth;
+            tempKey = new SoftKey(Key.LWin, "Win", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
+            this.canvas.Children.Add(tempKey.key);
+            pX += (w + Config.keyInterval);
+            //LAltKey
+            w = 1.25 * Config.charKeyWidth;
+            tempKey = new SoftKey(Key.LeftAlt, "Alt", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
+            this.canvas.Children.Add(tempKey.key);
+            pX += (w + Config.keyInterval);
+            //SpaceBar
+            w = 5.75 * Config.charKeyWidth + 6 * Config.keyInterval;
+            tempKey = new SoftKey(Key.Space, "", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            //this.nonCharKeys.Add(tempKey);
+            this.spacebarKey = tempKey;
+            this.canvas.Children.Add(tempKey.key);
+            pX += (w + Config.keyInterval);
+            //RAltKey
+            w = 1.25 * Config.charKeyWidth;
+            tempKey = new SoftKey(Key.RightAlt, "Alt", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
+            this.canvas.Children.Add(tempKey.key);
+            pX += (w + Config.keyInterval);
+            //RWinKey
+            w = 1.25 * Config.charKeyWidth;
+            tempKey = new SoftKey(Key.RWin, "Win", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
+            this.canvas.Children.Add(tempKey.key);
+            pX += (w + Config.keyInterval);
+            //MenuKey
+            w = 1.25 * Config.charKeyWidth;
+            tempKey = new SoftKey(Key.Apps, "⿳", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
+            this.canvas.Children.Add(tempKey.key);
+            pX += (w + Config.keyInterval);
+            //RCtrlKey
+            w = 1.25 * Config.charKeyWidth;
+            tempKey = new SoftKey(Key.RightCtrl, "Ctrl", null, pX, pY, w, h);
+            this.allKeys.Add(tempKey);
+            this.nonCharKeys.Add(tempKey);
+            this.canvas.Children.Add(tempKey.key);
+            pX += (w + Config.keyInterval);
+        }
+
+       /* private void renderKeyboard()
+        {
+            this.canvas.Background = Brushes.White;
+
+            int len = Config.line0Key.Length;
+            double pX = Config.keyInterval;
+            double pY = Config.keyInterval;
+            double w = Config.charKeyWidth;
+            double h = Config.charKeyHeight;
+            SoftKey tempKey;
+            for (int i = 0; i < len; i++)
             {
                 tempKey = new SoftKey(Config.line0Key[i], Config.line0UpChar[i], Config.line0DownChar[i], pX, pY, w, h);
                 this.allKeys.Add(tempKey);
                 if (i > 0 && i < 10)
                 {
                     this.numKeys.Add(tempKey);
-                } else
+                }
+                else
                 {
                     this.nonCharKeys.Add(tempKey);
                 }
@@ -226,7 +372,7 @@ namespace Keyboard
             this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
-        }
+        }*/
 
         public string getClosestChar(Point pos)
         {

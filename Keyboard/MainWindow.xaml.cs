@@ -222,6 +222,7 @@ namespace Keyboard
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
+            this.log.stopRecording();
             this.Close();
         }
 
