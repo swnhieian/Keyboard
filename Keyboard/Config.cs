@@ -76,15 +76,15 @@ namespace Keyboard
         };
         public static Key[] newline2Key =
         {
-            Key.A, Key.S, Key.D, Key.F, Key.G, Key.H, Key.J, Key.K, Key.L, Key.OemSemicolon, Key.OemQuotes
+            Key.A, Key.S, Key.D, Key.F, Key.G, Key.H, Key.J, Key.K, Key.L, Key.OemQuotes
         };
         public static string[] newline2UpChar =
         {
-            "A", "S", "D", "F", "G", "H", "J", "K", "L", ":", "\""
+            "A", "S", "D", "F", "G", "H", "J", "K", "L", "\""
         };
         public static string[] newline2DownChar =
         {
-            "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'"
+            "a", "s", "d", "f", "g", "h", "j", "k", "l", "'"
         };
         public static Key[] newline3Key =
        {
