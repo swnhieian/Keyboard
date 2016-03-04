@@ -90,6 +90,7 @@ namespace Keyboard
                 this.Opacity = 0.8;
                 this.Left = 0;
                 this.Top = System.Windows.SystemParameters.PrimaryScreenHeight - this.Height;
+               
             }
             else
             {

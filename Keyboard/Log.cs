@@ -39,6 +39,11 @@ namespace Keyboard
 
         public Log()
         {
+            logDir = Directory.GetCurrentDirectory() + "\\logs\\" + Config.userName;
+            if (!Directory.Exists(logDir))
+            {
+                Directory.CreateDirectory(logDir);
+            }
             taskStartTime = DateTime.Now;
             startRecording();
             LogRecord.startTime = taskStartTime;
@@ -46,12 +51,7 @@ namespace Keyboard
             this.accelerometer = Accelerometer.GetDefault();
             this.inclinometer = Inclinometer.GetDefault();
             this.gyrometer = Gyrometer.GetDefault();
-            this.orientationSensor = OrientationSensor.GetDefault();
-            logDir = Directory.GetCurrentDirectory() + "\\logs\\" + Config.userName;
-            if (!Directory.Exists(logDir))
-            {
-                Directory.CreateDirectory(logDir);
-            }
+            this.orientationSensor = OrientationSensor.GetDefault();            
         }
         public void setTasks(Tasks tasks)
         {

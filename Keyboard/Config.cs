@@ -61,6 +61,46 @@ namespace Keyboard
         public static double charKeyWidth = 80;
         public static double charKeyHeight = 80;
         public static double keyInterval = 5;
+
+        public static Key[] newline1Key =
+        {
+            Key.Q, Key.W, Key.E, Key.R, Key.T, Key.Y, Key.U, Key.I, Key.O, Key.P
+        };
+        public static string[] newline1UpChar =
+        {
+            "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"
+        };
+        public static string[] newline1DownChar =
+        {
+            "q", "w", "e", "r", "t", "y", "u", "i", "o", "p"
+        };
+        public static Key[] newline2Key =
+        {
+            Key.A, Key.S, Key.D, Key.F, Key.G, Key.H, Key.J, Key.K, Key.L, Key.OemSemicolon, Key.OemQuotes
+        };
+        public static string[] newline2UpChar =
+        {
+            "A", "S", "D", "F", "G", "H", "J", "K", "L", ":", "\""
+        };
+        public static string[] newline2DownChar =
+        {
+            "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'"
+        };
+        public static Key[] newline3Key =
+       {
+            Key.Z, Key.X, Key.C, Key.V, Key.B, Key.N, Key.M, Key.OemComma, Key.OemPeriod, Key.OemQuestion
+        };
+        public static string[] newline3UpChar =
+        {
+            "Z", "X", "C", "V", "B", "N", "M", "<", ">", "?"
+        };
+        public static string[] newline3DownChar =
+        {
+            "z", "x", "c", "v", "b", "n", "m", ",", ".", "/"
+        };
+
+
+
         public static Key[] line0Key =
         {
             Key.OemTilde, Key.D1, Key.D2, Key.D3, Key.D4, Key.D5, Key.D6, Key.D7, Key.D8, Key.D9, Key.D0, Key.OemMinus, Key.Add
