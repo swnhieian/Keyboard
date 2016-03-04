@@ -72,8 +72,8 @@ namespace Keyboard
             this.configCanvas.Background = Config.configCanvasBackgroundColor;
             this.inputCanvas.Background = Config.inputCanvasBackgroundColor;
             //
-            this.softKeyboardCanvas.Width = 14.5 * Config.charKeyWidth + 15 * Config.keyInterval;
-            this.softKeyboardCanvas.Height = 5 * Config.charKeyHeight + 6 * Config.keyInterval;
+            this.softKeyboardCanvas.Width = 12 * Config.charKeyWidth + 13 * Config.keyInterval;
+            this.softKeyboardCanvas.Height = 4 * Config.charKeyHeight + 5 * Config.keyInterval;
             //this.softKeyboardCanvas.Margin = new Thickness(0, Config.hintBlockHeight + Config.keyInterval, 0, 0);
             this.softKeyboardCanvas.Margin = new Thickness(Config.hintBlockHeight + Config.keyInterval);
             if (Config.isPractice)
@@ -105,7 +105,7 @@ namespace Keyboard
         }
         private void initializeVars()
         {
-            this.log = new Log();
+            this.log = new Log(this);
             this.softKeyboard = new SoftKeyboard(this.softKeyboardCanvas, this.log);
             this.taskTextBlock = new TextBlock();
             Canvas.SetLeft(this.taskTextBlock, Canvas.GetLeft(this.inputTextBox));
@@ -239,6 +239,10 @@ namespace Keyboard
         private void ComboBoxItem_Selected_2(object sender, RoutedEventArgs e)
         {
             Config.predictAlgorithm = PredictAlgorithms.CollectData;
+        }
+
+        public void setProgressBar(double value) {
+            this.progressBar.Value = value;
         }
     }
 }

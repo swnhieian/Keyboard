@@ -24,6 +24,7 @@
                 <ComboBoxItem Selected="ComboBoxItem_Selected_1" IsSelected="True">Absolute</ComboBoxItem>
                 <ComboBoxItem Selected="ComboBoxItem_Selected_2">CollectData</ComboBoxItem>
             </ComboBox>
+            <ProgressBar Name="progressBar" Height="10" Canvas.Left="49" Canvas.Top="257" Width="136"/>
         </Canvas>
         <Canvas Name="softKeyboardCanvas" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Canvas.Top="526" PreviewTouchDown="softKeyboardCanvas_PreviewTouchDown" PreviewTouchUp="softKeyboardCanvas_PreviewTouchUp" PreviewMouseDown="softKeyboardCanvas_PreviewMouseDown" Canvas.Left="327" Margin="10,15,49,328"/>
         <Canvas Name="inputCanvas" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="279" Margin="10,10,0,0" VerticalAlignment="Top" Width="1058">

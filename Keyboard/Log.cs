@@ -23,6 +23,7 @@ namespace Keyboard
     enum LogType { Type, RawInput, Delete, Space, Enter, Select};
     class Log
     {
+        private MainWindow window;
         private DateTime taskStartTime;
         private Tasks tasks;
         private WordPredictor wordPredictor;
@@ -36,9 +37,11 @@ namespace Keyboard
 
         private WaveFileWriter waveFileWriter;
         private WaveIn waveIn;
+        private SampleAggregator sampleAggregator;
 
-        public Log()
+        public Log(MainWindow window)
         {
+            this.window = window;
             logDir = Directory.GetCurrentDirectory() + "\\logs\\" + Config.userName;
             if (!Directory.Exists(logDir))
             {
@@ -86,10 +89,20 @@ namespace Keyboard
             if (waveIn != null) return;
             string fileName = taskStartTime.ToString("MM_dd_HH_mm_ss") + ".wav";
             waveIn = new WaveIn { WaveFormat = new WaveFormat(8000, 1) };
+            sampleAggregator = new SampleAggregator();
+            sampleAggregator.MaximumCalculated += OnRecorderMaximumCalculated;
+            sampleAggregator.NotificationCount = waveIn.WaveFormat.SampleRate / 10;
+
             waveFileWriter = new WaveFileWriter(logDir + "\\" + fileName, waveIn.WaveFormat);
             waveIn.DataAvailable += waveIn_DataAvailable;
             waveIn.RecordingStopped += onRecordingStopped;
             waveIn.StartRecording();
+        }
+        void OnRecorderMaximumCalculated(object sender, MaxSampleEventArgs e)
+        {
+            float lastPeak = Math.Max(e.MaxSample, Math.Abs(e.MinSample));
+            this.window.setProgressBar(lastPeak * 100);
+
         }
         public void stopRecording()
         {
@@ -103,6 +116,12 @@ namespace Keyboard
         {
             waveFileWriter.Write(e.Buffer, 0, e.BytesRecorded);
             int secondsRecorded = (int)(waveFileWriter.Length / waveFileWriter.WaveFormat.AverageBytesPerSecond);
+            for (int i = 0; i < e.BytesRecorded; i += 2)
+            {
+                short sample = (short)((e.Buffer[i + 1] << 8) | e.Buffer[i + 0]);
+                float sample32 = sample / 32768f;
+                sampleAggregator.Add(sample32);
+            }
         }
         private void onRecordingStopped(object sender, StoppedEventArgs e)
         {
