@@ -53,12 +53,20 @@ namespace Keyboard
             logList = new List<LogRecord>();
             this.accelerometer = Accelerometer.GetDefault();
             this.inclinometer = Inclinometer.GetDefault();
+            this.inclinometer.ReadingChanged += onInclinometerReadingChanged;
             this.gyrometer = Gyrometer.GetDefault();
             this.orientationSensor = OrientationSensor.GetDefault();            
         }
         public void setTasks(Tasks tasks)
         {
             this.tasks = tasks;
+        }
+        private void onInclinometerReadingChanged(object sender, InclinometerReadingChangedEventArgs e)
+        {
+            string str = e.Reading.PitchDegrees.ToString();
+            str += "\n"+e.Reading.RollDegrees.ToString();
+            str += "\n"+e.Reading.YawDegrees.ToString();
+            this.window.setInclinometerReading(str);
         }
         public void setWordPredictor(WordPredictor wordPredictor)
         {
@@ -101,7 +109,7 @@ namespace Keyboard
         void OnRecorderMaximumCalculated(object sender, MaxSampleEventArgs e)
         {
             float lastPeak = Math.Max(e.MaxSample, Math.Abs(e.MinSample));
-            this.window.setProgressBar(lastPeak * 100);
+            this.window.setProgressBar(lastPeak*100);
 
         }
         public void stopRecording()

@@ -58,8 +58,8 @@ namespace Keyboard
 
 
 
-        public static double charKeyWidth = 80;
-        public static double charKeyHeight = 80;
+        public static double charKeyWidth = 90;
+        public static double charKeyHeight = 90;
         public static double keyInterval = 5;
 
         public static Key[] newline1Key =

@@ -242,7 +242,27 @@ namespace Keyboard
         }
 
         public void setProgressBar(double value) {
+            //this.progressBar.Maximum = 1;
             this.progressBar.Value = value;
+            //this.statusBox.Text = value.ToString();
+            if (value < 1.5)
+            {
+                if (value < 0.8)
+                {
+                    this.statusBox.Text = "轻击";
+                } else
+                {
+                    this.statusBox.Text = "重击";
+                }
+            }
+        }
+        public void setInclinometerReading(string value)
+        {
+            this.inclinometerReadingBox.Dispatcher.Invoke(new Action(() =>
+            {
+                this.inclinometerReadingBox.Text = value;
+            }));
+            //this.inclinometerReadingBox.Text = value;
         }
     }
 }
