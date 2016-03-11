@@ -24,6 +24,7 @@ namespace Keyboard
     class Log
     {
         private MainWindow window;
+        private StatusAnalyze statusAnalyzer;
         private DateTime taskStartTime;
         private Tasks tasks;
         private WordPredictor wordPredictor;
@@ -42,6 +43,7 @@ namespace Keyboard
         public Log(MainWindow window)
         {
             this.window = window;
+            this.statusAnalyzer = new StatusAnalyze(window);
             logDir = Directory.GetCurrentDirectory() + "\\logs\\" + Config.userName;
             if (!Directory.Exists(logDir))
             {
@@ -53,7 +55,7 @@ namespace Keyboard
             logList = new List<LogRecord>();
             this.accelerometer = Accelerometer.GetDefault();
             this.inclinometer = Inclinometer.GetDefault();
-            this.inclinometer.ReadingChanged += onInclinometerReadingChanged;
+            //this.inclinometer.ReadingChanged += onInclinometerReadingChanged;
             this.gyrometer = Gyrometer.GetDefault();
             this.orientationSensor = OrientationSensor.GetDefault();            
         }
@@ -80,6 +82,7 @@ namespace Keyboard
             record.setPredictHints(this.wordPredictor.getPredictHints());
             record.setInclinometerReading(this.inclinometer.GetCurrentReading());
             this.logList.Add(record);
+            this.statusAnalyzer.addLog(record);
         }
         public void saveLogs()
         {

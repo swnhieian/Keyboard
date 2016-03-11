@@ -29,7 +29,7 @@ namespace Keyboard
         string dest;
         Key rawKey;
         string predictHints;
-        double inclinometer_x, inclinometer_y, inclinometer_z;
+        public double inclinometer_x, inclinometer_y, inclinometer_z;
         public LogRecord(LogType logType, Point pos)
         {
             this.type = logType;

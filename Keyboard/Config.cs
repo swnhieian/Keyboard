@@ -22,6 +22,7 @@ namespace Keyboard
 
 
         //
+        public static int logAnalyzeWindowSize = 10;
 
 
         public static int hintBlockNum = 5;

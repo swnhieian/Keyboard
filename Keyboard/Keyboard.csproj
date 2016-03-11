@@ -76,6 +76,7 @@
     <Compile Include="Simulator.cs" />
     <Compile Include="SoftKey.cs" />
     <Compile Include="SoftKeyboard.cs" />
+    <Compile Include="StatusAnalyze.cs" />
     <Compile Include="Tasks.cs" />
     <Compile Include="WordPredictor.cs" />
     <Page Include="MainWindow.xaml">
