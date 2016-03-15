@@ -28,7 +28,7 @@
             <TextBox x:Name="statusBox" Height="22" Canvas.Left="136" TextWrapping="Wrap" Text="状态" Canvas.Top="31" Width="120"/>
             <TextBox x:Name="inclinometerReadingBox" Height="93" Canvas.Left="141" TextWrapping="Wrap" Text="TextBox" Canvas.Top="69" Width="120"/>
         </Canvas>
-        <Canvas Name="softKeyboardCanvas" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Canvas.Top="526" PreviewTouchDown="softKeyboardCanvas_PreviewTouchDown" PreviewTouchUp="softKeyboardCanvas_PreviewTouchUp" PreviewMouseDown="softKeyboardCanvas_PreviewMouseDown" Canvas.Left="327" Margin="10,15,49,328"/>
+        <Canvas Name="softKeyboardCanvas" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Canvas.Top="526" PreviewTouchDown="softKeyboardCanvas_PreviewTouchDown" PreviewTouchMove="softKeyboardCanvas_PreviewTouchMove" PreviewTouchUp="softKeyboardCanvas_PreviewTouchUp" PreviewMouseDown="softKeyboardCanvas_PreviewMouseDown" Canvas.Left="327" Margin="10,15,49,328"/>
         <Canvas Name="inputCanvas" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="279" Margin="10,10,0,0" VerticalAlignment="Top" Width="1058">
             <TextBox Name="inputTextBox" Height="66" Canvas.Left="110" TextWrapping="Wrap" Text="TextBox" Canvas.Top="92" Width="677" PreviewKeyDown="inputTextBox_PreviewKeyDown"/>
         </Canvas>

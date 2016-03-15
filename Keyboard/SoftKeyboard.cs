@@ -23,15 +23,17 @@ namespace Keyboard
         private List<SoftKey> numKeys;
         private WordPredictor wordPredictor;
         private Log log;
+        private Log behaviorLog;
         //
         public Key numKey(int index)
         {
             return this.numKeys[index].keyValue;
         }
-        public SoftKeyboard(Canvas canvas, Log log)
+        public SoftKeyboard(Canvas canvas, Log log, Log behaviorLog)
         {
             this.canvas = canvas;
             this.log = log;
+            this.behaviorLog = behaviorLog;
             initilizeVars();
             renderKeyboard();
         }
@@ -387,8 +389,9 @@ namespace Keyboard
             return ret;
         }
 
-        public void touchDown(Point pos)
+        public void touchDown(Point pos, int id)
         {
+            this.behaviorLog.addLog(LogType.TouchDown, pos, id);
             if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn)
             {
                 wordPredictor.reset();
@@ -415,26 +418,26 @@ namespace Keyboard
                             wordPredictor.isControlKeyOn = true;
                         }                        
                         this.nonCharKeys[i].press();
-                        log.addLog(LogType.RawInput, pos, this.nonCharKeys[i].keyValue);
+                        log.addLog(LogType.RawInput, pos, id, this.nonCharKeys[i].keyValue);
                         return;
                     }
                 }
                 if (this.backspaceKey.contains(pos))
                 {
                     wordPredictor.delete();
-                    log.addLog(LogType.Delete, pos, this.backspaceKey.keyValue);
+                    log.addLog(LogType.Delete, pos, id, this.backspaceKey.keyValue);
                     return;
                 }
                 if (this.spacebarKey.contains(pos))
                 {
                     wordPredictor.space();
-                    log.addLog(LogType.Space, pos, this.spacebarKey.keyValue);
+                    log.addLog(LogType.Space, pos, id, this.spacebarKey.keyValue);
                     return;
                 }
                 if (this.enterKey.contains(pos))
                 {
                     wordPredictor.enter();
-                    log.addLog(LogType.Enter, pos, this.enterKey.keyValue);
+                    log.addLog(LogType.Enter, pos,id, this.enterKey.keyValue);
                     return;
                 }
                 for (int i=0; i< this.numKeys.Count; i++)
@@ -442,18 +445,19 @@ namespace Keyboard
                     if (this.numKeys[i].contains(pos))
                     {
                         wordPredictor.select(i);
-                        log.addLog(LogType.Select, pos, this.numKeys[i].keyValue);
+                        log.addLog(LogType.Select, pos, id, this.numKeys[i].keyValue);
                         return;
                     }
                 }
                 wordPredictor.type(pos);
-                log.addLog(LogType.Type, pos);
+                log.addLog(LogType.Type, pos, id);
             }
 
         }
 
-        public void touchUp(Point pos)
+        public void touchUp(Point pos, int id)
         {
+            this.behaviorLog.addLog(LogType.TouchUp, pos, id);
             if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn)
             {
                 //plain input
@@ -482,6 +486,11 @@ namespace Keyboard
                 }
             }
 
+        }
+
+        public void touchMove(Point pos, int id)
+        {
+            this.behaviorLog.addLog(LogType.TouchMove, pos, id);
         }
 
     }
