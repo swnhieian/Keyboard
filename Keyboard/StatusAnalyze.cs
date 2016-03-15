@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Keyboard
 {
-    enum MoveStatus { Still, Move};
-    enum SpeedStatus { Fast, Slow};
+    public enum MoveStatus { Still, Move};
+    public enum SpeedStatus { Fast, Slow};
     class StatusAnalyze
     {
         private MainWindow window;
@@ -44,7 +44,15 @@ namespace Keyboard
             xVar /= logWindow.Count;
             yVar /= logWindow.Count;
             zVar /= logWindow.Count;
-            Console.WriteLine("{0},{1},{2}", xVar,yVar, zVar);
+            if (xVar < 0.1 && xVar < 0.1 && zVar < 0.1)
+            {
+                this.moveStatus = MoveStatus.Still;
+            } else
+            {
+                this.moveStatus = MoveStatus.Move;
+            }
+            window.setMoveStatus(this.moveStatus);
+            window.setTest(String.Format("{0},{1},{2}", xVar,yVar, zVar));
         }
     }
 }

@@ -278,6 +278,19 @@ namespace Keyboard
             //this.inclinometerReadingBox.Text = value;
         }
 
-        
+        public void setMoveStatus(MoveStatus moveStatus)
+        {
+            if (moveStatus == MoveStatus.Still)
+            {
+                this.moveStatusBox.Text = "静止";
+            } else if (moveStatus  == MoveStatus.Move)
+            {
+                this.moveStatusBox.Text = "运动";
+            }
+        }
+        public void setTest(string str)
+        {
+            this.inclinometerReadingBox.Text = str;
+        }
     }
 }
