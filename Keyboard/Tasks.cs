@@ -29,6 +29,11 @@ namespace Keyboard
         {
             this.taskBlock = taskb;
             this.inputBlock = inputb;
+            loadTask();
+            
+        }
+        public void loadTask()
+        {
             taskTexts = File.ReadAllLines(taskFilePath);
             shuffleTasks(new Random());
             taskSize = taskTexts.Length;
@@ -36,6 +41,32 @@ namespace Keyboard
             taskPointer = -1;
             afterSelect = false;
             updateTextBlock();
+        }
+        private string getRandChar()
+        {
+            Random rand = new Random();
+            if (rand.NextDouble() < 0.2)
+            {
+                return " ";
+            } else
+            {
+                char ch = (char)(0x61 + rand.Next() % 26);
+                return ch.ToString();
+            }
+        }
+        public void loadSlowTask()
+        {
+            for (int i=0; i<taskSize; i++)
+            {
+                int length = taskTexts[i].Length;
+                string gen = "";
+                for (int j=0; j< length; j++)
+                {
+                    gen += getRandChar();
+                }
+                gen = gen.Trim();
+                taskTexts[i] = gen;
+            }
         }
         private void updateTextBlock()
         {

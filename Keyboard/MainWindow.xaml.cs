@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 
 using System.IO;
+using System.Diagnostics;
 
 
 namespace Keyboard
@@ -291,6 +292,29 @@ namespace Keyboard
         public void setTest(string str)
         {
             this.inclinometerReadingBox.Text = str;
+        }
+
+        private void speedStatusSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(speedStatusSelect.SelectedIndex == 1) //Slow
+            {
+                this.task.loadSlowTask();
+
+            } else if (speedStatusSelect.SelectedIndex == 2) //Fast
+            {
+
+            } else
+            {
+                Debug.Assert(speedStatusSelect.SelectedIndex == 0);
+                this.task.loadTask();
+            }
+
+        }
+
+        private void startButton_Click(object sender, RoutedEventArgs e)
+        {
+            speedStatusSelect.IsReadOnly = true;
+
         }
     }
 }
