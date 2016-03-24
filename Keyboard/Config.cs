@@ -13,8 +13,11 @@ using System.Windows.Media;
 namespace Keyboard
 {
     enum PredictAlgorithms { None, Absolute, Relative, CollectData };
+    enum CollectDataMode { Normal, Slow, Fast};
     static class Config
     {
+        public static CollectDataMode collectDataMode = CollectDataMode.Normal;
+
         public static string userName = "test";
         //?????
         public static Dictionary<char, double> keyPosX = new Dictionary<char, double>();
@@ -33,6 +36,7 @@ namespace Keyboard
         public static double hintBlockFontSize = 25;
         public static Brush hintBlockForeground = Brushes.White;
 
+        public static FontFamily fontFamily = new FontFamily("Courier New");
         public static double taskInputBlockWidth = 800;
         public static double taskInputBlockHeight = 50;
         public static Brush taskInputBlockBackground = Brushes.White;

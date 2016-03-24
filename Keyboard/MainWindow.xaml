@@ -25,9 +25,9 @@
                 <ComboBoxItem Selected="ComboBoxItem_Selected_2">CollectData</ComboBoxItem>
             </ComboBox>
             <ComboBox x:Name="speedStatusSelect" Canvas.Left="180" Canvas.Top="191" Width="81" SelectionChanged="speedStatusSelect_SelectionChanged">
-                <ComboBoxItem Selected="ComboBoxItem_Selected" IsSelected="True">Normal</ComboBoxItem>
-                <ComboBoxItem Selected="ComboBoxItem_Selected_1">Slow</ComboBoxItem>
-                <ComboBoxItem Selected="ComboBoxItem_Selected_2">Fast</ComboBoxItem>
+                <ComboBoxItem IsSelected="True">Normal</ComboBoxItem>
+                <ComboBoxItem>Slow</ComboBoxItem>
+                <ComboBoxItem>Fast</ComboBoxItem>
             </ComboBox>
             <ProgressBar Name="progressBar" Height="10" Canvas.Left="60" Canvas.Top="167" Width="136"/>
             <TextBox x:Name="statusBox" Height="22" Canvas.Left="136" TextWrapping="Wrap" Text="状态" Canvas.Top="31" Width="120"/>
