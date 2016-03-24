@@ -52,7 +52,7 @@ namespace Keyboard
                 this.moveStatus = MoveStatus.Move;
             }
             window.setMoveStatus(this.moveStatus);
-            window.setTest(String.Format("{0},{1},{2}", xVar,yVar, zVar));
+            //window.setTest(String.Format("{0},{1},{2}", xVar,yVar, zVar));
         }
     }
 }

@@ -96,16 +96,17 @@ namespace Keyboard
         }*/
         public void addLog(LogType logType, Point pos, int id, Key rawKey = Key.None)
         {
-          
             LogRecord record = new LogRecord(logType, pos);
             record.setId(id);
             record.setDest(this.tasks.getCurrentDest());
             record.setKey(rawKey);
             record.setPredictHints(this.wordPredictor.getPredictHints());
-            record.setInclinometerReading(this.inclinometer.GetCurrentReading());
-            record.setAccelerometerReading(this.accelerometer.GetCurrentReading());
-            record.setGyrometerReading(this.gyrometer.GetCurrentReading());
-            record.setLightSensorReading(this.lightsensor.GetCurrentReading());
+            if (isBehavior)
+            {
+                record.setInclinometerReading(this.inclinometer.GetCurrentReading());
+                record.setAccelerometerReading(this.accelerometer.GetCurrentReading());
+                record.setGyrometerReading(this.gyrometer.GetCurrentReading());
+            }
             this.logList.Add(record);
             //this.statusAnalyzer.addLog(record);
             if (logType == LogType.TouchDown)

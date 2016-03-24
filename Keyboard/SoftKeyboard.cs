@@ -56,6 +56,7 @@ namespace Keyboard
             this.numKeys = new List<SoftKey>();
             this.wordPredictor = new WordPredictor(this);
             this.log.setWordPredictor(this.wordPredictor);
+            this.behaviorLog.setWordPredictor(this.wordPredictor);
         }
         private void renderKeyboard()
         {

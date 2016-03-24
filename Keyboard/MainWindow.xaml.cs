@@ -65,7 +65,7 @@ namespace Keyboard
             //设定窗口为全屏
             this.WindowState = WindowState.Maximized;
             //this.ResizeMode = ResizeMode.NoResize;
-            this.Topmost = true;
+            this.Topmost = false;
             //this.WindowStyle = Config.isWindowFullScreen ? WindowStyle.None : WindowStyle.SingleBorderWindow;
             this.WindowStyle = WindowStyle.None;
             //设定背景颜色
@@ -145,27 +145,27 @@ namespace Keyboard
             e.Handled = true;
         }
 
-        private void softKeyboardCanvas_PreviewTouchDown(object sender, TouchEventArgs e)
+        private void softKeyboardCanvas_TouchDown(object sender, TouchEventArgs e)
         {
             int id = e.TouchDevice.Id;
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
             this.softKeyboard.touchDown(pos, id);
-            //e.Handled = true;
+            e.Handled = true;
         }
-        private void softKeyboardCanvas_PreviewTouchUp(object sender, TouchEventArgs e)
+        private void softKeyboardCanvas_TouchUp(object sender, TouchEventArgs e)
         {
             int id = e.TouchDevice.Id;
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
             this.softKeyboard.touchUp(pos, id);
-            //e.Handled = true;
+            e.Handled = true;
         }
 
-        private void softKeyboardCanvas_PreviewTouchMove(object sender, TouchEventArgs e)
+        private void softKeyboardCanvas_TouchMove(object sender, TouchEventArgs e)
         {
             int id = e.TouchDevice.Id;
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
             this.softKeyboard.touchMove(pos, id);
-            //e.Handled = true;
+            e.Handled = true;
         }
 
         private void practiceButton_Click(object sender, RoutedEventArgs e)

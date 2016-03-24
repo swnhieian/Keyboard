@@ -95,7 +95,7 @@ namespace Keyboard
         public override string ToString()
         {
             string str = "";
-            str += (id.ToString());
+            str += (id.ToString()+",");
             str += (time.Subtract(startTime).TotalMilliseconds.ToString()+",");
             str += (type.ToString() + "," + pos.X + "," + pos.Y + "," + dest + "," + rawKey.ToString() + "," + predictHints);
             str += ("," + inclinometer_x + "," + inclinometer_y + "," + inclinometer_z);
