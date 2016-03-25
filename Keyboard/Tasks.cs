@@ -47,6 +47,8 @@ namespace Keyboard
         {
             //this.taskBlock.
             taskStarted = false;
+            StringAnimationUsingKeyFrames stringA = new StringAnimationUsingKeyFrames();
+            this.taskBlock.BeginAnimation(TextBlock.TextProperty, stringA);
         }
         public void startTask()
         {

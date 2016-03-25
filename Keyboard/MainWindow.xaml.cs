@@ -184,8 +184,8 @@ namespace Keyboard
         private void softKeyboardCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             /*Point pos = e.GetPosition(this.softKeyboardCanvas);
-            this.softKeyboard.touchDown(pos);
-            this.softKeyboard.touchUp(pos);
+            this.softKeyboard.touchDown(pos, 0);
+            this.softKeyboard.touchUp(pos, 0);
             e.Handled = true;*/
 
         }
