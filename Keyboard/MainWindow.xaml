@@ -24,10 +24,16 @@
                 <ComboBoxItem Selected="ComboBoxItem_Selected_1" IsSelected="True">Absolute</ComboBoxItem>
                 <ComboBoxItem Selected="ComboBoxItem_Selected_2">CollectData</ComboBoxItem>
             </ComboBox>
-            <ProgressBar Name="progressBar" Height="10" Canvas.Left="49" Canvas.Top="257" Width="136"/>
+            <ComboBox x:Name="speedStatusSelect" Canvas.Left="180" Canvas.Top="191" Width="81" SelectionChanged="speedStatusSelect_SelectionChanged">
+                <ComboBoxItem IsSelected="True">Normal</ComboBoxItem>
+                <ComboBoxItem>Slow</ComboBoxItem>
+                <ComboBoxItem>Fast</ComboBoxItem>
+            </ComboBox>
+            <ProgressBar Name="progressBar" Height="10" Canvas.Left="60" Canvas.Top="167" Width="136"/>
             <TextBox x:Name="statusBox" Height="22" Canvas.Left="136" TextWrapping="Wrap" Text="状态" Canvas.Top="31" Width="120"/>
-            <TextBox x:Name="inclinometerReadingBox" Height="93" Canvas.Left="141" TextWrapping="Wrap" Text="TextBox" Canvas.Top="69" Width="120"/>
+            <TextBox x:Name="inclinometerReadingBox" Height="75" Canvas.Left="141" TextWrapping="Wrap" Text="TextBox" Canvas.Top="69" Width="120"/>
             <TextBox x:Name="moveStatusBox" Height="23" Canvas.Left="136" TextWrapping="Wrap" Text="动静" Canvas.Top="3" Width="32"/>
+            <Button x:Name="startButton" Content="开始" Canvas.Left="74" Canvas.Top="249" Width="75" Click="startButton_Click"/>
         </Canvas>
         <Canvas Name="softKeyboardCanvas" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Canvas.Top="526" TouchDown="softKeyboardCanvas_TouchDown" TouchMove="softKeyboardCanvas_TouchMove" TouchUp="softKeyboardCanvas_TouchUp" PreviewMouseDown="softKeyboardCanvas_PreviewMouseDown" Canvas.Left="327" Margin="10,15,49,328"/>
         <Canvas Name="inputCanvas" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="279" Margin="10,10,0,0" VerticalAlignment="Top" Width="1058">

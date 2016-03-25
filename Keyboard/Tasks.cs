@@ -13,6 +13,9 @@ using System.Windows.Shapes;
 using System.Windows;
 using System.Windows.Controls;
 
+using System.Timers;
+using System.Windows.Media.Animation;
+
 namespace Keyboard
 {
     class Tasks
@@ -25,10 +28,60 @@ namespace Keyboard
         private int taskPointer;
         private bool afterSelect;
         private string taskFilePath = "../../Resources/TaskTexts.txt";
+        private Timer fastTaskTimer;
+
+        private bool taskStarted = false;
         public Tasks(TextBlock taskb, TextBox inputb)
         {
             this.taskBlock = taskb;
             this.inputBlock = inputb;
+            loadTask();
+            fastTaskTimer = new Timer(1000);
+            //fastTaskTimer.Elapsed += FastTaskTimer_Elapsed;
+            //fastTaskTimer.Start();
+            TextBlock mask = new TextBlock();
+            mask.Height = taskBlock.Height;
+            mask.Width = 0;
+        }
+        public void startNewTask()
+        {
+            //this.taskBlock.
+            taskStarted = false;
+        }
+        public void startTask()
+        {
+            if (!taskStarted && Config.collectDataMode == CollectDataMode.Fast)
+            {
+                StringAnimationUsingKeyFrames stringAnimation = new StringAnimationUsingKeyFrames();
+                string t = "";
+                for (int i=0; i<currentTaskText.Length; i++)
+                {                    
+                    string v = t + currentTaskText.Substring(i);
+                    DiscreteStringKeyFrame kf = new DiscreteStringKeyFrame(v, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(i + 1)));
+                    stringAnimation.KeyFrames.Add(kf);
+                    t += " ";
+                }
+                this.taskBlock.BeginAnimation(TextBlock.TextProperty, stringAnimation);
+            }
+            taskStarted = true;
+        }
+
+        public void updateTask()
+        {
+            if (Config.collectDataMode == CollectDataMode.Normal)
+            {
+                loadTask();
+            } else if (Config.collectDataMode == CollectDataMode.Slow)
+            {
+                loadSlowTask();
+            } else if (Config.collectDataMode == CollectDataMode.Fast)
+            {
+
+            }
+            this.updateTextBlock();
+        }
+        public void loadTask()
+        {
             taskTexts = File.ReadAllLines(taskFilePath);
             shuffleTasks(new Random());
             taskSize = taskTexts.Length;
@@ -37,10 +90,40 @@ namespace Keyboard
             afterSelect = false;
             updateTextBlock();
         }
+        private string getRandChar(Random rand)
+        {
+            if (rand.NextDouble() < 0.2)
+            {
+                return " ";
+            } else
+            {
+                char ch = (char)(0x61 + rand.Next() % 26);
+                return ch.ToString();
+            }
+        }
+        public void loadSlowTask()
+        {
+            Random rand = new Random();
+            for (int i=0; i<taskSize; i++)
+            {
+                int length = taskTexts[i].Length;
+                string gen = "";
+                for (int j=0; j< length; j++)
+                {
+                    gen += getRandChar(rand);
+                }
+                gen = gen.Trim();
+                taskTexts[i] = gen;
+            }
+        }
         private void updateTextBlock()
         {
-            this.taskBlock.Text = taskTexts[currentTaskNo % taskSize];
+            this.taskBlock.Text = currentTaskText;
             this.inputBlock.Text = "";
+        }
+        private string currentTaskText
+        {
+            get { return taskTexts[currentTaskNo % taskSize]; }
         }
         private void shuffleTasks(Random rnd)
         {

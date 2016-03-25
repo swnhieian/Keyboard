@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 
 using System.IO;
+using System.Diagnostics;
 
 
 namespace Keyboard
@@ -26,7 +27,7 @@ namespace Keyboard
     /// </summary>
     public partial class MainWindow : Window
     {
-       
+
         [DllImport("user32.dll")]
         public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         [DllImport("user32.dll")]
@@ -35,7 +36,7 @@ namespace Keyboard
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
         int GWL_EXSTYLE = (-20);
         int WS_EX_NOACTIVATE = 0x08000000;
-        
+
 
         private SoftKeyboard softKeyboard;
         private Tasks task;
@@ -91,7 +92,7 @@ namespace Keyboard
                 this.Opacity = 0.8;
                 this.Left = 0;
                 this.Top = System.Windows.SystemParameters.PrimaryScreenHeight - this.Height;
-               
+
             }
             else
             {
@@ -118,14 +119,16 @@ namespace Keyboard
             this.taskTextBlock.Foreground = Config.taskTextBlockForeground;
             this.taskTextBlock.FontSize = Config.taskTextBlockFontSize;
             this.inputCanvas.Children.Add(this.taskTextBlock);
-            this.taskTextBlock.Visibility = Config.showTask?Visibility.Visible:Visibility.Hidden;
+            this.taskTextBlock.Visibility = Config.showTask ? Visibility.Visible : Visibility.Hidden;
             this.taskTextBlock.Text = "task";
+            this.taskTextBlock.FontFamily = Config.fontFamily;
             this.inputTextBox.Width = Config.taskInputBlockWidth;
             this.inputTextBox.Height = Config.taskInputBlockHeight;
             this.inputTextBox.Background = Config.taskInputBlockBackground;
             this.inputTextBox.Foreground = Config.taskInputBlockForeground;
             this.inputTextBox.FontSize = Config.taskInputBlockFontSize;
             this.inputTextBox.VerticalAlignment = VerticalAlignment.Center;
+            this.inputTextBox.FontFamily = Config.fontFamily;
 
             this.task = new Tasks(this.taskTextBlock, this.inputTextBox);
             this.log.setTasks(this.task);
@@ -133,7 +136,7 @@ namespace Keyboard
             this.softKeyboard.setTasks(this.task);
         }
 
-        
+
 
 
         private void configCanvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -150,7 +153,8 @@ namespace Keyboard
             int id = e.TouchDevice.Id;
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
             this.softKeyboard.touchDown(pos, id);
-            e.Handled = true;
+            this.task.startTask();
+            //e.Handled = true;
         }
         private void softKeyboardCanvas_TouchUp(object sender, TouchEventArgs e)
         {
@@ -174,7 +178,7 @@ namespace Keyboard
             Button b = sender as Button;
             b.Content = Config.isPractice.ToString();
             initializeWindow();
-            this.softKeyboard.reRenderHintBlocks();            
+            this.softKeyboard.reRenderHintBlocks();
         }
 
         private void softKeyboardCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -204,7 +208,7 @@ namespace Keyboard
             }
 
         }
-        
+
         private void showTaskCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             showTaskCheckBox_Changed(sender as CheckBox);
@@ -226,6 +230,7 @@ namespace Keyboard
             if (e.Key == Key.Enter)
             {
                 this.task.gotoNext();
+                this.task.startNewTask();
                 this.softKeyboard.resetWordPredictor();
                 log.saveLogs();
                 behaviorLog.saveLogs();
@@ -254,7 +259,8 @@ namespace Keyboard
             Config.predictAlgorithm = PredictAlgorithms.CollectData;
         }
 
-        public void setProgressBar(double value) {
+        public void setProgressBar(double value)
+        {
             //this.progressBar.Maximum = 1;
             this.progressBar.Value = value;
             //this.statusBox.Text = value.ToString();
@@ -263,7 +269,8 @@ namespace Keyboard
                 if (value < 0.8)
                 {
                     this.statusBox.Text = "轻击";
-                } else
+                }
+                else
                 {
                     this.statusBox.Text = "重击";
                 }
@@ -283,7 +290,8 @@ namespace Keyboard
             if (moveStatus == MoveStatus.Still)
             {
                 this.moveStatusBox.Text = "静止";
-            } else if (moveStatus  == MoveStatus.Move)
+            }
+            else if (moveStatus == MoveStatus.Move)
             {
                 this.moveStatusBox.Text = "运动";
             }
@@ -291,6 +299,35 @@ namespace Keyboard
         public void setTest(string str)
         {
             this.inclinometerReadingBox.Text = str;
+        }
+
+        private void speedStatusSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (speedStatusSelect.SelectedIndex == 1) //Slow
+            {
+                Config.collectDataMode = CollectDataMode.Slow;
+
+            }
+            else if (speedStatusSelect.SelectedIndex == 2) //Fast
+            {
+                Config.collectDataMode = CollectDataMode.Fast;
+            }
+            else
+            {
+                Debug.Assert(speedStatusSelect.SelectedIndex == 0);
+                Config.collectDataMode = CollectDataMode.Normal;
+            }
+            if (this.task != null)
+            {
+                this.task.updateTask();
+            }
+
+        }
+
+        private void startButton_Click(object sender, RoutedEventArgs e)
+        {
+            speedStatusSelect.IsReadOnly = true;
+
         }
     }
 }
