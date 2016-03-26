@@ -151,6 +151,7 @@ namespace Keyboard
         private void softKeyboardCanvas_TouchDown(object sender, TouchEventArgs e)
         {
             int id = e.TouchDevice.Id;
+            Console.WriteLine(id);
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
             this.softKeyboard.touchDown(pos, id);
             this.task.startTask();
