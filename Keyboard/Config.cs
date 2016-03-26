@@ -16,6 +16,7 @@ namespace Keyboard
     enum CollectDataMode { Normal, Slow, Fast};
     static class Config
     {
+        public static DateTime startTime = DateTime.Now;
         public static CollectDataMode collectDataMode = CollectDataMode.Normal;
 
         public static string userName = "test";
