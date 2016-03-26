@@ -39,10 +39,10 @@ namespace Keyboard
 
 
         private SoftKeyboard softKeyboard;
+        private TouchAnalyzer touchAnalyzer;
         private Tasks task;
         private TextBlock taskTextBlock;
         private Log log;
-        private Log behaviorLog;
         //临时变量
         Rectangle r;
         public MainWindow()
@@ -108,8 +108,7 @@ namespace Keyboard
         private void initializeVars()
         {
             this.log = new Log(this);
-            this.behaviorLog = new Log(this, true);
-            this.softKeyboard = new SoftKeyboard(this.softKeyboardCanvas, this.log, this.behaviorLog);
+            this.softKeyboard = new SoftKeyboard(this.softKeyboardCanvas, this.log);
             this.taskTextBlock = new TextBlock();
             Canvas.SetLeft(this.taskTextBlock, Canvas.GetLeft(this.inputTextBox));
             Canvas.SetTop(this.taskTextBlock, Canvas.GetTop(this.inputTextBox) - Config.taskInputBlockHeight);
@@ -132,8 +131,9 @@ namespace Keyboard
 
             this.task = new Tasks(this.taskTextBlock, this.inputTextBox);
             this.log.setTasks(this.task);
-            this.behaviorLog.setTasks(this.task);
+            //this.behaviorLog.setTasks(this.task);
             this.softKeyboard.setTasks(this.task);
+            this.touchAnalyzer = new TouchAnalyzer(this, this.softKeyboard);
         }
 
 
@@ -152,15 +152,14 @@ namespace Keyboard
         {
             int id = e.TouchDevice.Id;
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
-            this.softKeyboard.touchDown(pos, id);
-            this.task.startTask();
-            //e.Handled = true;
+            this.touchAnalyzer.addTouchDown(id, pos);            
+            e.Handled = true;
         }
         private void softKeyboardCanvas_TouchUp(object sender, TouchEventArgs e)
         {
             int id = e.TouchDevice.Id;
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
-            this.softKeyboard.touchUp(pos, id);
+            this.touchAnalyzer.addTouchUp(id, pos);
             e.Handled = true;
         }
 
@@ -168,7 +167,7 @@ namespace Keyboard
         {
             int id = e.TouchDevice.Id;
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
-            this.softKeyboard.touchMove(pos, id);
+            this.touchAnalyzer.addTouchMove(id, pos);
             e.Handled = true;
         }
 
@@ -233,7 +232,7 @@ namespace Keyboard
                 this.task.startNewTask();
                 this.softKeyboard.resetWordPredictor();
                 log.saveLogs();
-                behaviorLog.saveLogs();
+                touchAnalyzer.saveLogs();
                 e.Handled = true;
             }
         }

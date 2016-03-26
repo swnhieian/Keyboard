@@ -29,11 +29,11 @@ namespace Keyboard
         {
             return this.numKeys[index].keyValue;
         }
-        public SoftKeyboard(Canvas canvas, Log log, Log behaviorLog)
+        public SoftKeyboard(Canvas canvas, Log log)
         {
             this.canvas = canvas;
             this.log = log;
-            this.behaviorLog = behaviorLog;
+            //this.behaviorLog = behaviorLog;
             initilizeVars();
             renderKeyboard();
         }
@@ -56,7 +56,7 @@ namespace Keyboard
             this.numKeys = new List<SoftKey>();
             this.wordPredictor = new WordPredictor(this);
             this.log.setWordPredictor(this.wordPredictor);
-            this.behaviorLog.setWordPredictor(this.wordPredictor);
+          //  this.behaviorLog.setWordPredictor(this.wordPredictor);
         }
         private void renderKeyboard()
         {
@@ -392,7 +392,7 @@ namespace Keyboard
 
         public void touchDown(Point pos, int id)
         {
-            this.behaviorLog.addLog(LogType.TouchDown, pos, id);
+           // this.behaviorLog.addLog(LogType.TouchDown, pos, id);
             if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn)
             {
                 wordPredictor.reset();
@@ -458,7 +458,7 @@ namespace Keyboard
 
         public void touchUp(Point pos, int id)
         {
-            this.behaviorLog.addLog(LogType.TouchUp, pos, id);
+           // this.behaviorLog.addLog(LogType.TouchUp, pos, id);
             if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn)
             {
                 //plain input
@@ -491,7 +491,7 @@ namespace Keyboard
 
         public void touchMove(Point pos, int id)
         {
-            this.behaviorLog.addLog(LogType.TouchMove, pos, id);
+          //  this.behaviorLog.addLog(LogType.TouchMove, pos, id);
         }
 
     }
