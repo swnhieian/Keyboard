@@ -20,7 +20,7 @@ using NAudio.Wave;
 
 namespace Keyboard
 {
-    enum LogType { Type, RawInput, Delete, Space, Enter, Select, TouchUp, TouchMove, TouchDown};
+    enum LogType { Type, RawInput, Delete, Space, Enter, Select, Reset, TouchUp, TouchMove, TouchDown};
     class Log
     {
         private bool isBehavior;
@@ -43,6 +43,7 @@ namespace Keyboard
         private WaveIn waveIn;
         private SampleAggregator sampleAggregator;
 
+
         public Log(MainWindow window, bool isBehavior = false)
         {
             this.window = window;
@@ -53,12 +54,6 @@ namespace Keyboard
             {
                 Directory.CreateDirectory(logDir);
             }
-            if (!isBehavior)
-            {
-                taskStartTime = DateTime.Now;
-                startRecording();
-            }            
-            LogRecord.startTime = taskStartTime;
             logList = new List<LogRecord>();
             this.accelerometer = Accelerometer.GetDefault();
             this.inclinometer = Inclinometer.GetDefault();
@@ -96,40 +91,50 @@ namespace Keyboard
         }*/
         public void addLog(LogType logType, Point pos, int id, Key rawKey = Key.None)
         {
-            LogRecord record = new LogRecord(logType, pos);
-            record.setId(id);
-            record.setDest(this.tasks.getCurrentDest());
-            record.setKey(rawKey);
-            record.setPredictHints(this.wordPredictor.getPredictHints());
-            if (isBehavior)
+            if (Config.collectDataStatus == CollectDataStatus.Started)
             {
-                record.setInclinometerReading(this.inclinometer.GetCurrentReading());
-                record.setAccelerometerReading(this.accelerometer.GetCurrentReading());
-                record.setGyrometerReading(this.gyrometer.GetCurrentReading());
-            }
-            this.logList.Add(record);
-            //this.statusAnalyzer.addLog(record);
-            if (logType == LogType.TouchDown)
-            {
-                this.statusAnalyzer.addLog(record);
+                LogRecord record = new LogRecord(logType, pos);
+                record.setId(id);
+                if (isBehavior)
+                {
+                    record.setDest(this.tasks.getCurrentDest());
+                    record.setInclinometerReading(this.inclinometer.GetCurrentReading());
+                    record.setAccelerometerReading(this.accelerometer.GetCurrentReading());
+                    record.setGyrometerReading(this.gyrometer.GetCurrentReading());
+                }
+                else
+                {
+                    record.setDest(this.tasks.getCurrentDest());
+                    record.setKey(rawKey);
+                    record.setPredictHints(this.wordPredictor.getPredictHints());
+                }
+                this.logList.Add(record);
+                //this.statusAnalyzer.addLog(record);
+                if (logType == LogType.TouchDown)
+                {
+                    this.statusAnalyzer.addLog(record);
+                }
             }
         }
         public void saveLogs()
         {
-            string fileName = taskStartTime.ToString("MM_dd_HH_mm_ss") + (isBehavior?"_behavior_":"")+".txt";
-
-            sw = new StreamWriter(logDir + "\\" + fileName, true);
-            foreach(LogRecord log in logList)
+            if (Config.collectDataStatus == CollectDataStatus.Started)
             {
-                sw.WriteLine(log.ToString());
+                string fileName = Config.startTime.ToString("MM_dd_HH_mm_ss") + (isBehavior ? "_behavior_" : "") + ".txt";
+
+                sw = new StreamWriter(logDir + "\\" + fileName, true);
+                foreach (LogRecord log in logList)
+                {
+                    sw.WriteLine(log.ToString());
+                }
+                sw.Close();
+                logList.Clear();
             }
-            sw.Close();
-            logList.Clear();
         }
-        private void startRecording()
+        public void startRecording()
         {
             if (waveIn != null) return;
-            string fileName = taskStartTime.ToString("MM_dd_HH_mm_ss") + ".wav";
+            string fileName = Config.startTime.ToString("MM_dd_HH_mm_ss") + ".wav";
             waveIn = new WaveIn { WaveFormat = new WaveFormat(8000, 1) };
             sampleAggregator = new SampleAggregator();
             sampleAggregator.MaximumCalculated += OnRecorderMaximumCalculated;

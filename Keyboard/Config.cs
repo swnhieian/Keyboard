@@ -14,12 +14,16 @@ namespace Keyboard
 {
     enum PredictAlgorithms { None, Absolute, Relative, CollectData };
     enum CollectDataMode { Normal, Slow, Fast};
+    enum CollectDataStatus { Warmingup, Started};
     static class Config
     {
         public static DateTime startTime = DateTime.Now;
         public static CollectDataMode collectDataMode = CollectDataMode.Normal;
+        public static CollectDataStatus collectDataStatus = CollectDataStatus.Warmingup;
+        public static double animationInterval = 0.5; // seconds
 
         public static string userName = "test";
+        public static string keyPosFileName = @"logs\" + userName + @"\keypos.txt";
         //?????
         public static Dictionary<char, double> keyPosX = new Dictionary<char, double>();
         public static Dictionary<char, double> keyPosY = new Dictionary<char, double>();
@@ -33,7 +37,7 @@ namespace Keyboard
         public static double hintBlockWidth = 200;
         public static double hintBlockHeight = 50;
         public static double hintBlockInterval = 10;
-        public static Brush hintBlockBackground = Brushes.Red;
+        public static Brush hintBlockBackground = new SolidColorBrush(Color.FromRgb(26,26,26));
         public static double hintBlockFontSize = 25;
         public static Brush hintBlockForeground = Brushes.White;
 
@@ -46,24 +50,25 @@ namespace Keyboard
 
         public static double taskTextBlockWidth = 800;
         public static double taskTextBlockHeith = 50;
-        public static Brush taskTextBlockBackground = Brushes.Blue;
-        public static Brush taskTextBlockForeground = Brushes.Black;
+        public static Brush taskTextBlockBackground = Brushes.Black;
+        public static Brush taskTextBlockForeground = Brushes.White;
         public static double taskTextBlockFontSize = 25;
+        public static Brush taskStatusBackground = Brushes.Black;
+        public static Brush taskStatusForeground = Brushes.White;
 
 
         public static PredictAlgorithms predictAlgorithm = PredictAlgorithms.Absolute;
         public static bool isWindowFullScreen = false;
-        public static Brush windowBackgroundColor = Brushes.Gray;
+        public static Brush windowBackgroundColor = Brushes.Black;
         public static Brush configCanvasBackgroundColor = Brushes.Green;
-        public static Brush inputCanvasBackgroundColor = Brushes.Green;
+        public static Brush inputCanvasBackgroundColor = Brushes.Black;
         public static bool isPractice = false;
 
         public static bool showTask = true;
-        
 
 
 
-
+        public static Brush keyboardBackground = Brushes.White;
         public static double charKeyWidth = 90;
         public static double charKeyHeight = 90;
         public static double keyInterval = 5;

@@ -20,7 +20,8 @@ namespace Keyboard
         }
         public bool isValidateTouch(HandPoint startHp)
         {
-            return ((this.time - startHp.time) < 10);
+          //  Console.WriteLine("RestTime:" + ((this.time - startHp.time).ToString()));
+            return ((this.time - startHp.time) < 350);
         }
         public bool isSwapLeft(HandPoint startHp)
         {

@@ -10,6 +10,8 @@ using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Media;
 
+using System.IO;
+
 namespace Keyboard
 {
     class SoftKeyboard
@@ -27,7 +29,7 @@ namespace Keyboard
         //
         public Key numKey(int index)
         {
-            return this.numKeys[index].keyValue;
+             return this.numKeys[index].keyValue;
         }
         public SoftKeyboard(Canvas canvas, Log log)
         {
@@ -60,8 +62,8 @@ namespace Keyboard
         }
         private void renderKeyboard()
         {
-            this.canvas.Background = Brushes.White;
-
+            SoftKey.wordPredictor = this.wordPredictor;
+            this.canvas.Background = Config.keyboardBackground;
             int len = Config.line0Key.Length;
             double pX = Config.keyInterval;
             double pY = Config.keyInterval;
@@ -189,11 +191,19 @@ namespace Keyboard
             pX += (w + Config.keyInterval);
             //MenuKey
             w = 1.0 * Config.charKeyWidth;
-            tempKey = new SoftKey(Key.Apps, "⿳", null, pX, pY, w, h);
+            tempKey = new SoftKey(Key.Apps, "⇄", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
             this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
+
+            //Save KeyboardPos
+            StreamWriter sw = new StreamWriter(Config.keyPosFileName);
+            foreach(var s in Config.keyPosX)
+            {
+                sw.WriteLine("{0},{1},{2}", s.Key, s.Value, Config.keyPosY[s.Key]);
+            }
+            sw.Close();
 
         }
 
@@ -393,7 +403,7 @@ namespace Keyboard
         public void touchDown(Point pos, int id)
         {
            // this.behaviorLog.addLog(LogType.TouchDown, pos, id);
-            if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn)
+            if ((Config.predictAlgorithm == PredictAlgorithms.None && !Config.isPractice)|| wordPredictor.isControlKeyOn)
             {
                 wordPredictor.reset();
                 //plain input
@@ -441,25 +451,32 @@ namespace Keyboard
                     log.addLog(LogType.Enter, pos,id, this.enterKey.keyValue);
                     return;
                 }
-                for (int i=0; i< this.numKeys.Count; i++)
-                {
-                    if (this.numKeys[i].contains(pos))
-                    {
-                        wordPredictor.select(i);
-                        log.addLog(LogType.Select, pos, id, this.numKeys[i].keyValue);
-                        return;
-                    }
-                }
+                //for (int i=0; i< this.numKeys.Count; i++)
+                //{
+                //    if (this.numKeys[i].contains(pos))
+                //    {
+                //        wordPredictor.select(i);
+                //        log.addLog(LogType.Select, pos, id, this.numKeys[i].keyValue);
+                //        return;
+                //    }
+                //}
                 wordPredictor.type(pos);
                 log.addLog(LogType.Type, pos, id);
             }
 
         }
-
+        public void delete()
+        {
+            this.wordPredictor.delete();
+        }
+        public void select(int num)
+        {
+            this.wordPredictor.select(num);
+        }
         public void touchUp(Point pos, int id)
         {
            // this.behaviorLog.addLog(LogType.TouchUp, pos, id);
-            if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn)
+            if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn || Config.collectDataMode == CollectDataMode.Slow)
             {
                 //plain input
                 for (int i = 0; i < this.allKeys.Count; i++)

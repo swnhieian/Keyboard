@@ -14,13 +14,14 @@ namespace Keyboard
 {
     class SoftKey
     {
+        public static WordPredictor wordPredictor;
         public Grid key;
         private Rectangle rectangle;
         private TextBlock textBlock;
         public Key keyValue;
         Rect rect;
-        Brush backgroundColor = new SolidColorBrush(Color.FromRgb(40, 40, 40));
-        Brush activeBackgroundColor = new SolidColorBrush(Color.FromRgb(20, 20, 20));
+        Brush backgroundColor = new SolidColorBrush(Color.FromRgb(51, 51, 51));
+        Brush activeBackgroundColor = new SolidColorBrush(Color.FromRgb(15, 15, 15));
         Brush foregroundColor = Brushes.White;
         string upChar;
         string downChar;
@@ -90,15 +91,37 @@ namespace Keyboard
 
         public void press()
         {
-            Simulator.Press(this.keyValue);
-            if (keyValue == Key.CapsLock)
+            if (keyValue == Key.Apps)
             {
-                updateCapsLockStatus();
+                if (Config.predictAlgorithm == PredictAlgorithms.None)
+                {
+                    Config.predictAlgorithm = PredictAlgorithms.Absolute;
+                    key.Background = this.backgroundColor;
+                    wordPredictor.reset();                    
+                } else if (Config.predictAlgorithm == PredictAlgorithms.Absolute)
+                {
+                    Config.predictAlgorithm = PredictAlgorithms.None;
+                    key.Background = this.activeBackgroundColor;
+                    wordPredictor.reset();
+                }
+            }
+            else {
+                Simulator.Press(this.keyValue);
+                if (keyValue == Key.CapsLock)
+                {
+                    updateCapsLockStatus();
+                }
             }
         }
         public void release()
         {
-            Simulator.Release(this.keyValue);
+            if (keyValue == Key.Apps)
+            {
+
+            }
+            else {
+                Simulator.Release(this.keyValue);
+            }
         }
         private void updateCapsLockStatus()
         {

@@ -18,30 +18,32 @@ using System.Windows.Media.Animation;
 
 namespace Keyboard
 {
-    class Tasks
+    public class Tasks
     {
         private TextBlock taskBlock;
         private TextBox inputBlock;
+        private TextBlock statusBlock;
         private string[] taskTexts;
         private int currentTaskNo;
         private int taskSize;
         private int taskPointer;
         private bool afterSelect;
         private string taskFilePath = "../../Resources/TaskTexts.txt";
-        private Timer fastTaskTimer;
+        private DateTime taskStartTime;
+        private DateTime lastTypeTime;
 
         private bool taskStarted = false;
-        public Tasks(TextBlock taskb, TextBox inputb)
+        public Tasks(TextBlock taskb, TextBox inputb, TextBlock statusb)
         {
             this.taskBlock = taskb;
             this.inputBlock = inputb;
+            this.statusBlock = statusb;
             loadTask();
-            fastTaskTimer = new Timer(1000);
-            //fastTaskTimer.Elapsed += FastTaskTimer_Elapsed;
-            //fastTaskTimer.Start();
-            TextBlock mask = new TextBlock();
-            mask.Height = taskBlock.Height;
-            mask.Width = 0;
+        }
+        public void endWarmup()
+        {
+            this.updateTask();
+            currentTaskNo = 0;
         }
         public void startNewTask()
         {
@@ -52,6 +54,8 @@ namespace Keyboard
         }
         public void startTask()
         {
+            this.taskStartTime = DateTime.Now;
+            this.lastTypeTime = DateTime.Now;
             if (!taskStarted && Config.collectDataMode == CollectDataMode.Fast)
             {
                 StringAnimationUsingKeyFrames stringAnimation = new StringAnimationUsingKeyFrames();
@@ -59,7 +63,7 @@ namespace Keyboard
                 for (int i=0; i<currentTaskText.Length; i++)
                 {                    
                     string v = t + currentTaskText.Substring(i);
-                    DiscreteStringKeyFrame kf = new DiscreteStringKeyFrame(v, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(i + 1)));
+                    DiscreteStringKeyFrame kf = new DiscreteStringKeyFrame(v, KeyTime.FromTimeSpan(TimeSpan.FromSeconds((i + 1)*Config.animationInterval)));
                     stringAnimation.KeyFrames.Add(kf);
                     t += " ";
                 }
@@ -78,7 +82,7 @@ namespace Keyboard
                 loadSlowTask();
             } else if (Config.collectDataMode == CollectDataMode.Fast)
             {
-
+                loadTask();
             }
             this.updateTextBlock();
         }
@@ -122,6 +126,7 @@ namespace Keyboard
         {
             this.taskBlock.Text = currentTaskText;
             this.inputBlock.Text = "";
+            this.statusBlock.Text = String.Format("Task {0}:{1}/{2}", Config.collectDataStatus.ToString(), currentTaskNo+1, taskSize);
         }
         private string currentTaskText
         {
@@ -143,16 +148,24 @@ namespace Keyboard
             updateTextBlock();
             taskPointer = -1;
         }
+        public void reset()
+        {
+            updateTextBlock();
+            taskPointer = -1;
+        }
         public void type()
         {
+            this.lastTypeTime = DateTime.Now;
             taskPointer++;
         }
         public void delete()
         {
+            this.lastTypeTime = DateTime.Now;
             if (taskPointer >= 0)
             {
                 taskPointer--;
             }
+            
         }
         public string getCurrentDest()
         {

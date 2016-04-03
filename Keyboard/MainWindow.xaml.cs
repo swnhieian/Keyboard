@@ -40,7 +40,7 @@ namespace Keyboard
 
         private SoftKeyboard softKeyboard;
         private TouchAnalyzer touchAnalyzer;
-        private Tasks task;
+        public Tasks task;
         private TextBlock taskTextBlock;
         private Log log;
         //临时变量
@@ -101,8 +101,11 @@ namespace Keyboard
                 this.WindowState = WindowState.Maximized;
                 this.inputCanvas.Visibility = Visibility.Visible;
                 Grid.SetRow(this.softKeyboardCanvas, 1);
-                //this.softKeyboardCanvas.Margin = new Thickness(0, inputCanvas.Height+80, 0, 0);
+                //Grid.SetColumn(this.softKeyboardCanvas, 0);
+                this.softKeyboardCanvas.Margin = new Thickness(-100, 0, 0, 0);
             }
+            this.taskStatusBlock.Background = Config.taskStatusBackground;
+            this.taskStatusBlock.Foreground = Config.taskStatusForeground;
 
         }
         private void initializeVars()
@@ -129,7 +132,7 @@ namespace Keyboard
             this.inputTextBox.VerticalAlignment = VerticalAlignment.Center;
             this.inputTextBox.FontFamily = Config.fontFamily;
 
-            this.task = new Tasks(this.taskTextBlock, this.inputTextBox);
+            this.task = new Tasks(this.taskTextBlock, this.inputTextBox, this.taskStatusBlock);
             this.log.setTasks(this.task);
             //this.behaviorLog.setTasks(this.task);
             this.softKeyboard.setTasks(this.task);
@@ -151,7 +154,6 @@ namespace Keyboard
         private void softKeyboardCanvas_TouchDown(object sender, TouchEventArgs e)
         {
             int id = e.TouchDevice.Id;
-            Console.WriteLine(id);
             Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
             this.touchAnalyzer.addTouchDown(id, pos);            
             e.Handled = true;
@@ -227,6 +229,7 @@ namespace Keyboard
 
         private void inputTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            
             if (e.Key == Key.Enter)
             {
                 this.task.gotoNext();
@@ -306,6 +309,7 @@ namespace Keyboard
             if (speedStatusSelect.SelectedIndex == 1) //Slow
             {
                 Config.collectDataMode = CollectDataMode.Slow;
+                Config.predictAlgorithm = PredictAlgorithms.None;
 
             }
             else if (speedStatusSelect.SelectedIndex == 2) //Fast
@@ -327,6 +331,16 @@ namespace Keyboard
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
             speedStatusSelect.IsReadOnly = true;
+            Config.startTime = DateTime.Now;
+            Config.collectDataStatus = CollectDataStatus.Started;
+            this.log.startRecording();
+            this.task.endWarmup();
+
+        }
+        private void resetButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.log.addLog(LogType.Reset, new Point(0, 0), 0);
+            this.task.reset();
 
         }
     }

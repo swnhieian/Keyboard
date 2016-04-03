@@ -22,7 +22,7 @@ namespace Keyboard
 {
     class LogRecord
     {
-        public static DateTime startTime;
+        //public static DateTime startTime;
         LogType type;
         DateTime time;
         Point pos;
@@ -94,15 +94,24 @@ namespace Keyboard
         }
         public override string ToString()
         {
-            string str = "";
-            str += (id.ToString()+",");
-            str += (time.Subtract(startTime).TotalMilliseconds.ToString()+",");
-            str += (type.ToString() + "," + pos.X + "," + pos.Y + "," + dest + "," + rawKey.ToString() + "," + predictHints);
-            str += ("," + inclinometer_x + "," + inclinometer_y + "," + inclinometer_z);
-            str += ("," + acceleration_x + "," + acceleration_y + "," + acceleration_z);
-            str += ("," + angularVelocity_x + "," + angularVelocity_y + "," + angularVelocity_z);
-            str += ("," + lightIntensity);
-            return str;
+            if (type == LogType.Reset)
+            {
+                return "Reset";
+            }
+            else
+            {
+                string str = "";
+                str += (id.ToString() + ",");
+                str += (time.Subtract(Config.startTime).TotalMilliseconds.ToString() + ",");
+                str += (type.ToString() + "," + pos.X + "," + pos.Y + "," + dest + "," + rawKey.ToString() + "," + predictHints);
+                if (type == LogType.TouchDown || type == LogType.TouchDown || type == LogType.TouchUp)
+                {
+                    str += ("," + inclinometer_x + "," + inclinometer_y + "," + inclinometer_z);
+                    str += ("," + acceleration_x + "," + acceleration_y + "," + acceleration_z);
+                    str += ("," + angularVelocity_x + "," + angularVelocity_y + "," + angularVelocity_z);
+                }
+                return str;
+            }
         }
     }
 }
