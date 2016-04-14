@@ -13,17 +13,19 @@ using System.Windows.Media;
 namespace Keyboard
 {
     enum PredictAlgorithms { None, Absolute, Relative, CollectData };
-    enum CollectDataMode { Normal, Slow, Fast};
+    enum CollectDataMode { Normal, EyesEngagedOneFinger, EyesEngagedTwoFinger, SemiEyesFree, FullEyesFree};
     enum CollectDataStatus { Warmingup, Started};
     static class Config
     {
+        public static int handIdCount = 0;
+        
         public static DateTime startTime = DateTime.Now;
         public static CollectDataMode collectDataMode = CollectDataMode.Normal;
         public static CollectDataStatus collectDataStatus = CollectDataStatus.Warmingup;
         public static double animationInterval = 0.5; // seconds
 
         public static string userName = "test";
-        public static string keyPosFileName = @"logs\" + userName + @"\keypos.txt";
+        public static string keyPosFileName = @"logs" + @"\keypos.txt";
         //?????
         public static Dictionary<char, double> keyPosX = new Dictionary<char, double>();
         public static Dictionary<char, double> keyPosY = new Dictionary<char, double>();
@@ -60,7 +62,7 @@ namespace Keyboard
         public static PredictAlgorithms predictAlgorithm = PredictAlgorithms.Absolute;
         public static bool isWindowFullScreen = false;
         public static Brush windowBackgroundColor = Brushes.Black;
-        public static Brush configCanvasBackgroundColor = Brushes.Green;
+        public static Brush configCanvasBackgroundColor = Brushes.Gray;
         public static Brush inputCanvasBackgroundColor = Brushes.Black;
         public static bool isPractice = false;
 
@@ -72,6 +74,7 @@ namespace Keyboard
         public static double charKeyWidth = 90;
         public static double charKeyHeight = 90;
         public static double keyInterval = 5;
+        public static double keyboardBound = -(charKeyHeight + keyInterval);
 
         public static Key[] newline1Key =
         {

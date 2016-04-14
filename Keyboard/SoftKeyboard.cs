@@ -9,12 +9,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 using System.IO;
+using System.Diagnostics;
 
 namespace Keyboard
 {
-    class SoftKeyboard
+    public class SoftKeyboard
     {
         public Canvas canvas;
         private List<SoftKey> allKeys;
@@ -22,7 +24,9 @@ namespace Keyboard
         private SoftKey backspaceKey;
         private SoftKey spacebarKey;
         private SoftKey enterKey;
+        private Dictionary<string, SoftKey> charKeys;
         private List<SoftKey> numKeys;
+        private Rectangle mask;
         private WordPredictor wordPredictor;
         private Log log;
         private Log behaviorLog;
@@ -57,11 +61,34 @@ namespace Keyboard
             this.nonCharKeys = new List<SoftKey>();
             this.numKeys = new List<SoftKey>();
             this.wordPredictor = new WordPredictor(this);
+            this.charKeys = new Dictionary<string, SoftKey>();
             this.log.setWordPredictor(this.wordPredictor);
           //  this.behaviorLog.setWordPredictor(this.wordPredictor);
         }
-        private void renderKeyboard()
+        public void goToTransparent()
         {
+            double last = 50;
+            if (Config.collectDataMode == CollectDataMode.SemiEyesFree)
+            {
+                last = 90;
+            } else if (Config.collectDataMode == CollectDataMode.FullEyesFree)
+            {
+                last = 100;
+            }
+            DoubleAnimation doubleAnimation = new DoubleAnimation(0, last, new Duration(TimeSpan.FromSeconds(10)));
+            this.mask.BeginAnimation(UIElement.OpacityProperty, doubleAnimation);            
+        }
+        public void goToOpaque()
+        {
+            this.mask.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0,new Duration(TimeSpan.FromSeconds(0))));
+            this.mask.Opacity = 0;
+        }
+        public void expandSpaceKey()
+        {
+            //spacebarKey.expand();
+        }
+        private void renderKeyboard()
+        {           
             SoftKey.wordPredictor = this.wordPredictor;
             this.canvas.Background = Config.keyboardBackground;
             int len = Config.line0Key.Length;
@@ -76,6 +103,7 @@ namespace Keyboard
                 tempKey = new SoftKey(Config.newline1Key[i], Config.newline1UpChar[i], Config.newline1DownChar[i], pX, pY, w, h);
                 this.allKeys.Add(tempKey);
                 this.canvas.Children.Add(tempKey.key);
+                this.charKeys.Add(Config.newline1DownChar[i], tempKey);
                 pX += (w + Config.keyInterval);
             }
 
@@ -103,6 +131,9 @@ namespace Keyboard
                 if (i > 8)
                 {
                     this.nonCharKeys.Add(tempKey);
+                } else
+                {
+                    this.charKeys.Add(Config.newline2DownChar[i], tempKey);
                 }
                 this.canvas.Children.Add(tempKey.key);
                 pX += (w + Config.keyInterval);
@@ -134,6 +165,9 @@ namespace Keyboard
                 if (i > 6)
                 {
                     this.nonCharKeys.Add(tempKey);
+                } else
+                {
+                    this.charKeys.Add(Config.newline3DownChar[i], tempKey);
                 }
                 this.canvas.Children.Add(tempKey.key);
                 pX += (w + Config.keyInterval);
@@ -171,6 +205,7 @@ namespace Keyboard
             w = 6 * Config.charKeyWidth + 5 * Config.keyInterval;
             tempKey = new SoftKey(Key.Space, "", null, pX, pY, w, h);
             this.allKeys.Add(tempKey);
+            this.charKeys.Add(" ", tempKey);
             //this.nonCharKeys.Add(tempKey);
             this.spacebarKey = tempKey;
             this.canvas.Children.Add(tempKey.key);
@@ -196,6 +231,13 @@ namespace Keyboard
             this.nonCharKeys.Add(tempKey);
             this.canvas.Children.Add(tempKey.key);
             pX += (w + Config.keyInterval);
+            //mask      
+            this.mask = new Rectangle();
+            mask.Height = canvas.Height;
+            mask.Width = canvas.Width;
+            mask.Fill = Config.keyboardBackground;
+            mask.Opacity = 0;
+            canvas.Children.Add(mask);
 
             //Save KeyboardPos
             StreamWriter sw = new StreamWriter(Config.keyPosFileName);
@@ -204,6 +246,7 @@ namespace Keyboard
                 sw.WriteLine("{0},{1},{2}", s.Key, s.Value, Config.keyPosY[s.Key]);
             }
             sw.Close();
+            
 
         }
 
@@ -399,9 +442,65 @@ namespace Keyboard
             }
             return ret;
         }
-
-        public void touchDown(Point pos, int id)
+        public bool judgeDest(string dest, Point pos)
         {
+            //Console.WriteLine("dest:{0}", dest);
+            if (dest == "ToNext")
+            {
+                return false;
+            }
+            Debug.Assert(this.charKeys.ContainsKey(dest));
+            SoftKey key = this.charKeys[dest];
+            return key.contains(pos);
+        }
+        public void touchDown(Point pos, int id, int handId)
+        {
+            if (Config.collectDataMode == CollectDataMode.EyesEngagedOneFinger || Config.collectDataMode == CollectDataMode.EyesEngagedTwoFinger)
+            {
+                wordPredictor.reset();
+                //plain input
+                for (int i = 0; i < this.allKeys.Count; i++)
+                {
+                    if (this.allKeys[i].contains(pos))
+                    {
+                        this.allKeys[i].press();
+                        log.addLog(LogType.RawInput, pos, id, handId, this.allKeys[i].keyValue);
+                        break;
+                    }
+                }
+            } else if (Config.collectDataMode == CollectDataMode.SemiEyesFree || Config.collectDataMode == CollectDataMode.FullEyesFree)
+            {
+                /*   for (int i = 0; i < this.nonCharKeys.Count; i++)
+                   {
+                       if (this.nonCharKeys[i].contains(pos))
+                       {
+                           this.nonCharKeys[i].press();
+                           log.addLog(LogType.RawInput, pos, id, this.nonCharKeys[i].keyValue);
+                           return;
+                       }
+                   }*/
+                //wordPredictor.reset();
+                /*if (this.backspaceKey.contains(pos))
+                {
+                    wordPredictor.delete();
+                    log.addLog(LogType.Delete, pos, id, this.backspaceKey.keyValue);
+                    return;
+                }*/
+                /*if (this.spacebarKey.contains(pos))
+                {
+                    wordPredictor.space();
+                    log.addLog(LogType.Space, pos, id, this.spacebarKey.keyValue);
+                    return;
+                }*/
+                /*if (this.enterKey.contains(pos))
+                {
+                    wordPredictor.enter();
+                    log.addLog(LogType.Enter, pos, id, this.enterKey.keyValue);
+                    return;
+                }*/
+                log.addLog(LogType.Type, pos, id, handId);
+                wordPredictor.type(pos);                
+            } else
            // this.behaviorLog.addLog(LogType.TouchDown, pos, id);
             if ((Config.predictAlgorithm == PredictAlgorithms.None && !Config.isPractice)|| wordPredictor.isControlKeyOn)
             {
@@ -429,26 +528,26 @@ namespace Keyboard
                             wordPredictor.isControlKeyOn = true;
                         }                        
                         this.nonCharKeys[i].press();
-                        log.addLog(LogType.RawInput, pos, id, this.nonCharKeys[i].keyValue);
+                        //log.addLog(LogType.RawInput, pos, id, this.nonCharKeys[i].keyValue);
                         return;
                     }
                 }
                 if (this.backspaceKey.contains(pos))
                 {
                     wordPredictor.delete();
-                    log.addLog(LogType.Delete, pos, id, this.backspaceKey.keyValue);
+                    //log.addLog(LogType.Delete, pos, id, this.backspaceKey.keyValue);
                     return;
                 }
                 if (this.spacebarKey.contains(pos))
                 {
                     wordPredictor.space();
-                    log.addLog(LogType.Space, pos, id, this.spacebarKey.keyValue);
+                   // log.addLog(LogType.Space, pos, id, this.spacebarKey.keyValue);
                     return;
                 }
                 if (this.enterKey.contains(pos))
                 {
                     wordPredictor.enter();
-                    log.addLog(LogType.Enter, pos,id, this.enterKey.keyValue);
+                    //log.addLog(LogType.Enter, pos,id, this.enterKey.keyValue);
                     return;
                 }
                 //for (int i=0; i< this.numKeys.Count; i++)
@@ -461,7 +560,7 @@ namespace Keyboard
                 //    }
                 //}
                 wordPredictor.type(pos);
-                log.addLog(LogType.Type, pos, id);
+               // log.addLog(LogType.Type, pos, id);
             }
 
         }
@@ -469,14 +568,43 @@ namespace Keyboard
         {
             this.wordPredictor.delete();
         }
+        public void enter()
+        {
+            this.wordPredictor.enter();
+        }
         public void select(int num)
         {
             this.wordPredictor.select(num);
         }
-        public void touchUp(Point pos, int id)
+        public void touchUp(Point pos, int id, int handId)
         {
+            if (Config.collectDataMode == CollectDataMode.EyesEngagedOneFinger || Config.collectDataMode == CollectDataMode.EyesEngagedTwoFinger)
+            {
+                for (int i = 0; i < this.allKeys.Count; i++)
+                {
+                    if (this.allKeys[i].contains(pos))
+                    {
+                        this.allKeys[i].release();
+                        if (this.allKeys[i].isControlKey)
+                        {
+                            wordPredictor.isControlKeyOn = false;
+                        }
+                        break;
+                    }
+                }
+            } else if (Config.collectDataMode == CollectDataMode.SemiEyesFree || Config.collectDataMode == CollectDataMode.FullEyesFree)
+            {
+                for (int i=0; i<this.nonCharKeys.Count; i++)
+                {
+                    if (this.nonCharKeys[i].contains(pos))
+                    {
+                        this.nonCharKeys[i].release();
+                        break;
+                    }
+                }
+            } else
            // this.behaviorLog.addLog(LogType.TouchUp, pos, id);
-            if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn || Config.collectDataMode == CollectDataMode.Slow)
+            if (Config.predictAlgorithm == PredictAlgorithms.None || wordPredictor.isControlKeyOn)
             {
                 //plain input
                 for (int i = 0; i < this.allKeys.Count; i++)

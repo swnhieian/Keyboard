@@ -49,12 +49,13 @@ namespace Keyboard
             Canvas.SetLeft(key, this.keyPosX);
             Canvas.SetTop(key, this.keyPosY);
             textBlock = new TextBlock();
+            textBlock.FontSize = 20;
             if (this.downChar == null)
             {
                 textBlock.Text = this.upChar;
             }
             else {
-                textBlock.Text = upChar + "\n\n" + downChar;
+                textBlock.Text = upChar; //+ "\n\n" + downChar;
             }
             textBlock.Foreground = this.foregroundColor;
             textBlock.HorizontalAlignment = HorizontalAlignment.Center;
@@ -83,10 +84,29 @@ namespace Keyboard
                 this.isControlKey = false;
             }
         }
+        static bool expanded = false;
+        public static void expand()
+        {
+            expanded = true;
+        }
+        public static void shrink()
+        {
+            expanded = false;
+        }
+        
 
         public bool contains(Point pos)
         {
-            return (pos.X > keyPosX && pos.X < keyPosX + keyWidth && pos.Y > keyPosY && pos.Y < keyPosY + keyHeight);
+            bool ret;
+            if (expanded)
+            {
+                ret = (pos.X > keyPosX- Config.charKeyWidth && pos.X < keyPosX + keyWidth+Config.charKeyWidth && pos.Y > keyPosY-Config.charKeyHeight && pos.Y < keyPosY + keyHeight+Config.charKeyHeight);
+                //expanded = false;
+            } else
+            {
+                ret = (pos.X > keyPosX && pos.X < keyPosX + keyWidth && pos.Y > keyPosY && pos.Y < keyPosY + keyHeight);
+            }
+            return ret;
         }
 
         public void press()

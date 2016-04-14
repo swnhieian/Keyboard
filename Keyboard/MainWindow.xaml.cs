@@ -41,7 +41,7 @@ namespace Keyboard
         private SoftKeyboard softKeyboard;
         private TouchAnalyzer touchAnalyzer;
         public Tasks task;
-        private TextBlock taskTextBlock;
+        private TextBox taskTextBlock;
         private Log log;
         //临时变量
         Rectangle r;
@@ -112,7 +112,7 @@ namespace Keyboard
         {
             this.log = new Log(this);
             this.softKeyboard = new SoftKeyboard(this.softKeyboardCanvas, this.log);
-            this.taskTextBlock = new TextBlock();
+            this.taskTextBlock = new TextBox();
             Canvas.SetLeft(this.taskTextBlock, Canvas.GetLeft(this.inputTextBox));
             Canvas.SetTop(this.taskTextBlock, Canvas.GetTop(this.inputTextBox) - Config.taskInputBlockHeight);
             this.taskTextBlock.Width = Config.taskTextBlockWidth;
@@ -120,6 +120,9 @@ namespace Keyboard
             this.taskTextBlock.Background = Config.taskTextBlockBackground;
             this.taskTextBlock.Foreground = Config.taskTextBlockForeground;
             this.taskTextBlock.FontSize = Config.taskTextBlockFontSize;
+            this.taskTextBlock.BorderThickness = new Thickness(0);
+            this.taskTextBlock.Focusable = false;
+            //this.taskTextBlock.ena
             this.inputCanvas.Children.Add(this.taskTextBlock);
             this.taskTextBlock.Visibility = Config.showTask ? Visibility.Visible : Visibility.Hidden;
             this.taskTextBlock.Text = "task";
@@ -132,7 +135,7 @@ namespace Keyboard
             this.inputTextBox.VerticalAlignment = VerticalAlignment.Center;
             this.inputTextBox.FontFamily = Config.fontFamily;
 
-            this.task = new Tasks(this.taskTextBlock, this.inputTextBox, this.taskStatusBlock);
+            this.task = new Tasks(this.taskTextBlock, this.inputTextBox, this.taskStatusBlock, this.softKeyboard);
             this.log.setTasks(this.task);
             //this.behaviorLog.setTasks(this.task);
             this.softKeyboard.setTasks(this.task);
@@ -151,28 +154,7 @@ namespace Keyboard
             e.Handled = true;
         }
 
-        private void softKeyboardCanvas_TouchDown(object sender, TouchEventArgs e)
-        {
-            int id = e.TouchDevice.Id;
-            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
-            this.touchAnalyzer.addTouchDown(id, pos);            
-            e.Handled = true;
-        }
-        private void softKeyboardCanvas_TouchUp(object sender, TouchEventArgs e)
-        {
-            int id = e.TouchDevice.Id;
-            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
-            this.touchAnalyzer.addTouchUp(id, pos);
-            e.Handled = true;
-        }
-
-        private void softKeyboardCanvas_TouchMove(object sender, TouchEventArgs e)
-        {
-            int id = e.TouchDevice.Id;
-            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
-            this.touchAnalyzer.addTouchMove(id, pos);
-            e.Handled = true;
-        }
+        
 
         private void practiceButton_Click(object sender, RoutedEventArgs e)
         {
@@ -232,11 +214,25 @@ namespace Keyboard
             
             if (e.Key == Key.Enter)
             {
-                this.task.gotoNext();
+                GoToNextStatus finished = this.task.gotoNext();
+                if (finished == GoToNextStatus.Finish)
+                {
+                    this.log.stopRecording();
+                } else if (finished == GoToNextStatus.Reset)
+                {
+                    this.log.addLog(LogType.Reset, new Point(0, 0), 0, -1);
+                    //this.task.reset();
+                    this.inputTextBox.Focus();
+                }
+                this.softKeyboard.goToOpaque();
                 this.task.startNewTask();
                 this.softKeyboard.resetWordPredictor();
                 log.saveLogs();
                 touchAnalyzer.saveLogs();
+                if (finished == GoToNextStatus.Finish)
+                {
+                    Config.collectDataStatus = CollectDataStatus.Warmingup;
+                }
                 e.Handled = true;
             }
         }
@@ -306,15 +302,26 @@ namespace Keyboard
 
         private void speedStatusSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (speedStatusSelect.SelectedIndex == 1) //Slow
+            if (speedStatusSelect.SelectedIndex == 1) //Eye Engaged
             {
-                Config.collectDataMode = CollectDataMode.Slow;
+                Config.collectDataMode = CollectDataMode.EyesEngagedOneFinger;
                 Config.predictAlgorithm = PredictAlgorithms.None;
-
+                SoftKey.shrink();
             }
-            else if (speedStatusSelect.SelectedIndex == 2) //Fast
+            else if (speedStatusSelect.SelectedIndex == 2)
             {
-                Config.collectDataMode = CollectDataMode.Fast;
+                Config.collectDataMode = CollectDataMode.EyesEngagedTwoFinger;
+                Config.predictAlgorithm = PredictAlgorithms.None;
+                SoftKey.shrink();
+            }
+            else if (speedStatusSelect.SelectedIndex == 3) //Semi EyesFree
+            {
+                Config.collectDataMode = CollectDataMode.SemiEyesFree;
+                SoftKey.expand();
+            } else if (speedStatusSelect.SelectedIndex == 4) // Full EyesFree 
+            {
+                Config.collectDataMode = CollectDataMode.FullEyesFree;
+                SoftKey.expand();
             }
             else
             {
@@ -323,8 +330,12 @@ namespace Keyboard
             }
             if (this.task != null)
             {
+                this.task.reset();
                 this.task.updateTask();
             }
+            e.Handled = true;
+            this.inputTextBox.Focus();
+
 
         }
 
@@ -334,14 +345,128 @@ namespace Keyboard
             Config.startTime = DateTime.Now;
             Config.collectDataStatus = CollectDataStatus.Started;
             this.log.startRecording();
+            this.log.saveTasks();
             this.task.endWarmup();
-
+            this.inputTextBox.Focus();
         }
         private void resetButton_Click(object sender, RoutedEventArgs e)
         {
-            this.log.addLog(LogType.Reset, new Point(0, 0), 0);
+            this.log.addLog(LogType.Reset, new Point(0, 0), 0, -1);
             this.task.reset();
+            this.inputTextBox.Focus();
 
+        }
+        private bool isCloseToKeyboard(Point pos)
+        {
+            return false;
+        }
+        private void softKeyboardCanvas_TouchDown(object sender, TouchEventArgs e)
+        {
+           /* int id = e.TouchDevice.Id;
+            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
+            this.touchAnalyzer.addTouchDown(id, pos);
+            e.Handled = true;*/
+        }
+        private void softKeyboardCanvas_TouchUp(object sender, TouchEventArgs e)
+        {
+            /*int id = e.TouchDevice.Id;
+            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
+            this.touchAnalyzer.addTouchUp(id, pos);
+            e.Handled = true;*/
+        }
+
+        private void softKeyboardCanvas_TouchMove(object sender, TouchEventArgs e)
+        {
+            /*int id = e.TouchDevice.Id;
+            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
+            this.touchAnalyzer.addTouchMove(id, pos);
+            e.Handled = true;*/
+        }
+        private void Window_TouchDown(object sender, TouchEventArgs e)
+        {
+            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
+            int id = e.TouchDevice.Id;
+            //Console.WriteLine("{0},{1}", pos.Y, Config.keyboardBound);
+            if (pos.Y >= Config.keyboardBound)
+            {
+                touchAnalyzer.addTouchDown(id, pos);
+            }
+            e.Handled = true;
+        }
+
+        private void Window_TouchMove(object sender, TouchEventArgs e)
+        {
+            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
+            int id = e.TouchDevice.Id;
+            if (pos.Y >= Config.keyboardBound)
+            {
+                touchAnalyzer.addTouchMove(id, pos);
+            }
+            e.Handled = true;
+        }
+
+        private void Window_TouchUp(object sender, TouchEventArgs e)
+        {
+            Point pos = e.GetTouchPoint(this.softKeyboardCanvas).Position;
+            int id = e.TouchDevice.Id;
+            if (pos.Y >= Config.keyboardBound)
+            {
+                touchAnalyzer.addTouchUp(id, pos);
+            }
+            e.Handled = true;
+        }
+
+        private void deleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("delete");
+            log.addLog(LogType.Delete, new Point(0,0), 0, -1,Key.Back);
+            this.inputTextBox.Focus();
+            softKeyboard.delete();
+            this.inputTextBox.Focus();
+        }
+
+        private void enterButton_Click(object sender, RoutedEventArgs e)
+        {
+            GoToNextStatus finished = this.task.gotoNext();
+            if (finished == GoToNextStatus.Finish)
+            {
+                this.log.stopRecording();
+            } else if (finished == GoToNextStatus.Reset)
+            {
+                this.log.addLog(LogType.Reset, new Point(0, 0), 0, -1);
+                //this.task.reset();
+                this.inputTextBox.Focus();
+            } else
+            {
+                Debug.Assert(finished == GoToNextStatus.Normal);
+                this.log.addLog(LogType.Enter, new Point(0, 0), 0, -1);
+            }
+            this.softKeyboard.goToOpaque();
+            this.task.startNewTask();
+            this.softKeyboard.resetWordPredictor();
+            log.saveLogs();
+            touchAnalyzer.saveLogs();
+            if (finished == GoToNextStatus.Finish)
+            {
+                Config.collectDataStatus = CollectDataStatus.Warmingup;
+            }
+            e.Handled = true;
+            this.inputTextBox.Focus();
+           /* if (this.task.gotoNext())
+            {
+                this.log.stopRecording();
+            }
+            this.log.saveLogs();
+            this.inputTextBox.Focus();       */     
+            //softKeyboard.enter();
+            
+
+        }
+
+        private void button_TouchUp(object sender, TouchEventArgs e)
+        {
+            e.Handled = true;
+            this.inputTextBox.Focus();
         }
     }
 }

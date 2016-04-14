@@ -18,7 +18,7 @@ using System.Windows.Shapes;
 
 namespace Keyboard
 {
-    class WordPredictor
+    public class WordPredictor
     {
         string wordFreqName = "../../Resources/wordFreq.json";
         string lenSetName = "../../Resources/lenSet.json";
@@ -65,10 +65,21 @@ namespace Keyboard
                 hintBlocks[i].TouchDown += new EventHandler<TouchEventArgs>((a, b) =>
                 {
                     TextBlock tb = b.Source as TextBlock;
-                    b.Handled = true;
+                    
                     int selectedHintBlockNo = hintBlocks.ToList().IndexOf(tb);
                     //Console.WriteLine("touchcown" + selectedHintBlockNo);
                     this.select(selectedHintBlockNo, true);
+                    b.Handled = true;
+                });
+                hintBlocks[i].TouchMove += new EventHandler<TouchEventArgs>((a, b) =>
+                {
+                    Console.WriteLine("aaaa");
+                    b.Handled = true;
+                });
+                hintBlocks[i].TouchUp += new EventHandler<TouchEventArgs>((a, b) =>
+                {
+                    Console.WriteLine("bbbb");
+                    b.Handled = true;
                 });
                 Canvas.SetTop(hintBlocks[i], -Config.hintBlockHeight);
                 this.canvas.Children.Add(hintBlocks[i]);
@@ -113,6 +124,7 @@ namespace Keyboard
         }
         public void delete()
         {
+            tasks.delete();
             //Console.WriteLine("delete");
             if (pointList.Count > 0)
             {
@@ -122,7 +134,7 @@ namespace Keyboard
             {
                 Simulator.Type(Key.Back);
             }
-            tasks.delete();
+           
         }
         public void space()
         {
@@ -130,6 +142,7 @@ namespace Keyboard
             if (pointList.Count > 0)
             {
                 select(0);
+                keyboard.expandSpaceKey();
             } else
             {
                 Simulator.Type(Key.Space);
@@ -142,6 +155,7 @@ namespace Keyboard
             if (pointList.Count > 0)
             {
                 select(0);
+                keyboard.expandSpaceKey();
             }
             else
             {
@@ -163,16 +177,38 @@ namespace Keyboard
             else if (!isTouchTrigger)
             {
                 Simulator.Type(keyboard.numKey(num));
-            }           
+            }
+            keyboard.expandSpaceKey();
         }
         public void type(Point pos)
         { 
             //Console.WriteLine("Type:" + pos.X + "," + pos.Y);
+            if (Config.collectDataMode == CollectDataMode.EyesEngagedOneFinger || Config.collectDataMode == CollectDataMode.EyesEngagedTwoFinger)
+            {
+                string ch = keyboard.getClosestChar(pos);                
+                Simulator.Type(ch);
+                tasks.type();
+            } else if (Config.collectDataMode == CollectDataMode.SemiEyesFree || Config.collectDataMode == CollectDataMode.FullEyesFree)
+            {
+                string dest = tasks.getCurrentDest();
+                //if (SoftKeyboard.)
+                if (keyboard.judgeDest(dest, pos))
+                {
+                    Simulator.Type(dest);
+                } else
+                {
+                    string ch = keyboard.getClosestChar(pos);
+                    Simulator.Type(ch);
+                }
+                //pointList.Add(pos);                
+                //updateHintBlocks();
+                tasks.type();
+            } else 
             if (Config.predictAlgorithm == PredictAlgorithms.CollectData)
             {
-                string ch = keyboard.getClosestChar(pos);
-                tasks.type();
+                string ch = keyboard.getClosestChar(pos);                
                 Simulator.Type(ch);
+                tasks.type();
             } else
             {
                 pointList.Add(pos);
@@ -198,48 +234,88 @@ namespace Keyboard
             }
             else {
                 List<KeyValuePair<string, double>> predictWords = predict();
-                int num = Config.hintBlockNum;
-                //if (predictWords.Count < num) num = predictWords.Count;
-                if (/*Config.isPractice*/Config.predictAlgorithm == PredictAlgorithms.None || Config.collectDataMode == CollectDataMode.Slow)
+                if (Config.collectDataMode == CollectDataMode.SemiEyesFree || Config.collectDataMode == CollectDataMode.FullEyesFree)
                 {
-                    //num--;
-                    string raw = "";
-                    foreach (Point p in pointList)
+                    string dest = tasks.getCurrentWord();
+                    int num = Math.Min(20, predictWords.Count);
+                    int hintIndex = 0;
+                    if (dest.Length > 0 && dest.Length == pointList.Count)
                     {
-                        raw += keyboard.getClosestChar(p);
-                    }
-                    hintBlocks[0].Text = raw;
-                    hintBlocks[0].Visibility = Visibility.Visible;
-                    int hintIndex = 1;
-                    int wordIndex = 0;
-                    while (hintIndex < num && wordIndex<predictWords.Count)
-                    {
-                        if (predictWords[wordIndex].Key != raw)
+                        for (int i = 0; i < num; i++)
                         {
-                            hintBlocks[hintIndex].Text = predictWords[wordIndex].Key;
+                            if (predictWords[i].Key == dest)
+                            {
+                                hintBlocks[hintIndex].Text = dest;
+                                hintBlocks[hintIndex].Visibility = Visibility.Visible;
+                                hintBlocks[hintIndex].Foreground = Brushes.Red;
+                                hintIndex++;
+                                keyboard.expandSpaceKey();
+                                break;
+                            }
+                        }
+                    }
+                    int predictIndex = 0;
+                    while (hintIndex < Config.hintBlockNum && predictIndex < predictWords.Count)
+                    {
+                        if (predictWords[predictIndex].Key != dest)
+                        {
+                            hintBlocks[hintIndex].Text = predictWords[predictIndex].Key;
                             hintBlocks[hintIndex].Visibility = Visibility.Visible;
+                            hintBlocks[hintIndex].Foreground = Brushes.White;
                             hintIndex++;
                         }
-                        wordIndex++;
+                        predictIndex++;
                     }
-                    for (int i =hintIndex; i < Config.hintBlockNum; i++)
-                    {
-                        hintBlocks[i].Visibility = Visibility.Hidden;
-                    }
-                }
-                else
+
+                } else
                 {
-                    if (predictWords.Count < num) num = predictWords.Count;
-                    for (int i = 0; i < num; i++)
+                    //Console.WriteLine(tasks.getCurrentWord());
+                    int num = Config.hintBlockNum;
+                    //if (predictWords.Count < num) num = predictWords.Count;
+                    if (/*Config.isPractice*/Config.predictAlgorithm == PredictAlgorithms.None || Config.collectDataMode == CollectDataMode.EyesEngagedOneFinger)
                     {
-                        hintBlocks[i].Text = predictWords[i].Key;
-                        hintBlocks[i].Visibility = Visibility.Visible;
+                        //num--;
+                        string raw = "";
+                        foreach (Point p in pointList)
+                        {
+                            raw += keyboard.getClosestChar(p);
+                        }
+                        hintBlocks[0].Text = raw;
+                        hintBlocks[0].Visibility = Visibility.Visible;
+                        int hintIndex = 1;
+                        int wordIndex = 0;
+                        while (hintIndex < num && wordIndex < predictWords.Count)
+                        {
+                            if (predictWords[wordIndex].Key != raw)
+                            {
+                                hintBlocks[hintIndex].Text = predictWords[wordIndex].Key;
+                                hintBlocks[hintIndex].Visibility = Visibility.Visible;
+                                hintIndex++;
+                            }
+                            wordIndex++;
+                        }
+                        for (int i = hintIndex; i < Config.hintBlockNum; i++)
+                        {
+                            hintBlocks[i].Visibility = Visibility.Hidden;
+                        }
                     }
-                    for (int i = num; i < Config.hintBlockNum; i++)
+                    else
                     {
-                        hintBlocks[i].Visibility = Visibility.Hidden;
+                        if (predictWords.Count < num) num = predictWords.Count;
+                        for (int i = 0; i < num; i++)
+                        {
+                            hintBlocks[i].Text = predictWords[i].Key;
+                            hintBlocks[i].Visibility = Visibility.Visible;
+                        }
+                        for (int i = num; i < Config.hintBlockNum; i++)
+                        {
+                            hintBlocks[i].Visibility = Visibility.Hidden;
+                        }
                     }
                 }
+                
+
+                
             }
             /*for (int i = 0; i < lastStr.Length; i++)
             {

@@ -18,11 +18,13 @@ using System.Windows.Media.Animation;
 
 namespace Keyboard
 {
+    public enum GoToNextStatus { Normal, Finish, Reset};
     public class Tasks
     {
-        private TextBlock taskBlock;
+        private TextBox taskBlock;
         private TextBox inputBlock;
         private TextBlock statusBlock;
+        private SoftKeyboard keyboard;
         private string[] taskTexts;
         private int currentTaskNo;
         private int taskSize;
@@ -31,14 +33,21 @@ namespace Keyboard
         private string taskFilePath = "../../Resources/TaskTexts.txt";
         private DateTime taskStartTime;
         private DateTime lastTypeTime;
+        private string[] taskWords;
+        private int wordPointer;
 
         private bool taskStarted = false;
-        public Tasks(TextBlock taskb, TextBox inputb, TextBlock statusb)
+        public Tasks(TextBox taskb, TextBox inputb, TextBlock statusb, SoftKeyboard keyboard)
         {
             this.taskBlock = taskb;
             this.inputBlock = inputb;
             this.statusBlock = statusb;
+            this.keyboard = keyboard;
             loadTask();
+            inputBlock.TextChanged += new TextChangedEventHandler((a, b) =>
+            {
+                this.updateStatusBlock();
+            });
         }
         public void endWarmup()
         {
@@ -49,32 +58,28 @@ namespace Keyboard
         {
             //this.taskBlock.
             taskStarted = false;
-            StringAnimationUsingKeyFrames stringA = new StringAnimationUsingKeyFrames();
-            this.taskBlock.BeginAnimation(TextBlock.TextProperty, stringA);
+            keyboard.goToOpaque();
+            //StringAnimationUsingKeyFrames stringA = new StringAnimationUsingKeyFrames();
+            //this.taskBlock.BeginAnimation(TextBlock.TextProperty, stringA);
         }
         public void startTask()
         {
-            this.taskStartTime = DateTime.Now;
-            this.lastTypeTime = DateTime.Now;
-            if (!taskStarted && Config.collectDataMode == CollectDataMode.Fast)
+            if (!taskStarted)
             {
-                StringAnimationUsingKeyFrames stringAnimation = new StringAnimationUsingKeyFrames();
-                string t = "";
-                for (int i=0; i<currentTaskText.Length; i++)
-                {                    
-                    string v = t + currentTaskText.Substring(i);
-                    DiscreteStringKeyFrame kf = new DiscreteStringKeyFrame(v, KeyTime.FromTimeSpan(TimeSpan.FromSeconds((i + 1)*Config.animationInterval)));
-                    stringAnimation.KeyFrames.Add(kf);
-                    t += " ";
-                }
-                this.taskBlock.BeginAnimation(TextBlock.TextProperty, stringAnimation);
+                this.taskStartTime = DateTime.Now;
+            }            
+            this.lastTypeTime = DateTime.Now;
+            if (!taskStarted && Config.collectDataMode == CollectDataMode.FullEyesFree)
+            {
+                keyboard.goToTransparent();
+               // this.taskBlock.BeginAnimation(TextBlock.TextProperty, stringAnimation);
             }
             taskStarted = true;
         }
 
         public void updateTask()
         {
-            if (Config.collectDataMode == CollectDataMode.Normal)
+            /*if (Config.collectDataMode == CollectDataMode.Normal)
             {
                 loadTask();
             } else if (Config.collectDataMode == CollectDataMode.Slow)
@@ -83,7 +88,8 @@ namespace Keyboard
             } else if (Config.collectDataMode == CollectDataMode.Fast)
             {
                 loadTask();
-            }
+            }*/
+            loadTask();
             this.updateTextBlock();
         }
         public void loadTask()
@@ -124,9 +130,22 @@ namespace Keyboard
         }
         private void updateTextBlock()
         {
+            this.taskWords = currentTaskText.Split(' ');
             this.taskBlock.Text = currentTaskText;
             this.inputBlock.Text = "";
-            this.statusBlock.Text = String.Format("Task {0}:{1}/{2}", Config.collectDataStatus.ToString(), currentTaskNo+1, taskSize);
+            updateStatusBlock();            
+        }
+        private void updateStatusBlock()
+        {
+            string correction = "";
+            if (this.inputBlock.Text.Length >= currentTaskText.Length)
+            {
+                double cer = (double)(getEditDistance(this.inputBlock.Text.Trim(), currentTaskText)) / currentTaskText.Length;
+                double time = this.lastTypeTime.Subtract(this.taskStartTime).TotalMilliseconds;
+                double wpm = currentTaskText.Length / (5 * time/60000);
+                correction += String.Format("CER: {0}%   WPM: {1}", 100 * cer, wpm);
+            }            
+            this.statusBlock.Text = String.Format("Task {0}:{1}/{2}   {3}", Config.collectDataStatus.ToString(), currentTaskNo + 1, taskSize, correction);
         }
         private string currentTaskText
         {
@@ -142,44 +161,109 @@ namespace Keyboard
                 taskTexts[j] = temp;
             }
         }
-        public void gotoNext()
+        public GoToNextStatus gotoNext()
         {
-            currentTaskNo = (currentTaskNo + 1) % taskSize;
-            updateTextBlock();
-            taskPointer = -1;
+            if (getEditDistance(this.inputBlock.Text.Trim(), currentTaskText) == 0)
+            {
+                if (currentTaskNo +1 == taskSize)
+                {
+                    
+                    MessageBox.Show("Finished!");
+                    return GoToNextStatus.Finish;               
+                }
+                currentTaskNo = (currentTaskNo + 1) % taskSize;                
+            } else
+            {
+                this.statusBlock.Text = "Without 100% accuracy, Can't go to next!";
+                reset();
+                return GoToNextStatus.Reset;
+            }
+            reset();
+            return GoToNextStatus.Normal;
         }
         public void reset()
         {
+            startNewTask();
             updateTextBlock();
             taskPointer = -1;
+            wordPointer = 0;
         }
         public void type()
         {
             this.lastTypeTime = DateTime.Now;
-            taskPointer++;
+            taskPointer++;            
+            if (taskPointer < currentTaskText.Length && currentTaskText[taskPointer] == ' ')
+            {
+                wordPointer++;
+            }
         }
         public void delete()
         {
-            this.lastTypeTime = DateTime.Now;
+            this.lastTypeTime = DateTime.Now;            
             if (taskPointer >= 0)
             {
                 taskPointer--;
             }
-            
+            if ((taskPointer+1<currentTaskText.Length) && currentTaskText[taskPointer+1] == ' ' && wordPointer > 0)
+            {
+                wordPointer--;
+            }
         }
         public string getCurrentDest()
         {
-            if (taskPointer >= taskTexts[currentTaskNo].Length)
+            if (taskPointer >= taskTexts[currentTaskNo].Length-1)
             {
                 return "ToNext";
-            } else if (afterSelect && taskTexts[currentTaskNo][taskPointer] == ' ')
+            } /*else if (afterSelect && taskTexts[currentTaskNo][taskPointer] == ' ')
             {
                 return "ToSelect";
-            } else if (taskPointer < 0)
+            } /*else if (taskPointer < 0)
             {
                 return "None";
+            }*/
+            return taskTexts[currentTaskNo][taskPointer+1].ToString();
+        }
+        public string getCurrentWord()
+        {
+            return taskWords[wordPointer];
+            /*
+            if (currentTaskText[taskPointer+1] == ' ')
+            {
+                int pos = currentTaskText.Substring(0, taskPointer + 1).LastIndexOf(' ');
+                word = currentTaskText.Substring(pos, taskPointer - pos + 1);
             }
-            return taskTexts[currentTaskNo][taskPointer].ToString();
+            return word;*/
+        }
+
+        private int getEditDistance(string s1, string s2)
+        {
+            int[,] f = new int[s1.Length+1,s2.Length+1];
+            for (int i=0; i<=s1.Length; i++)
+            {
+                f[i,0] = i;
+            }
+            for (int i=0; i<=s2.Length; i++)
+            {
+                f[0, i] = i;
+            }
+            for (int i=1; i<=s1.Length; i++)
+            {
+                for (int j=1; j<=s2.Length; j++)
+                {
+                    f[i, j] = Int32.MaxValue;
+                    f[i, j] = Math.Min(f[i, j], f[i, j - 1] + 1);
+                    f[i, j] = Math.Min(f[i, j], f[i - 1, j] + 1);
+                    f[i, j] = Math.Min(f[i, j], f[i - 1, j - 1] + (s1[i-1] == s2[j-1] ? 0 : 1));
+                }
+            }
+            return f[s1.Length, s2.Length];
+        }
+        public void saveTasks(StreamWriter sw)
+        {
+            foreach(string task in taskTexts)
+            {
+                sw.WriteLine(task);
+            }
         }
     }
 }

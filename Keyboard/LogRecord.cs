@@ -30,15 +30,17 @@ namespace Keyboard
         Key rawKey;
         string predictHints;
         int id;
+        int handId;
         public double inclinometer_x, inclinometer_y, inclinometer_z;
         public double acceleration_x, acceleration_y, acceleration_z;
         public double angularVelocity_x, angularVelocity_y, angularVelocity_z;
         public float lightIntensity;
-        public LogRecord(LogType logType, Point pos)
+        public LogRecord(LogType logType, Point pos, int handId)
         {
             this.type = logType;
             this.time = DateTime.Now;
             this.pos = pos;
+            this.handId = handId;
         }
         public void setDest(string dest)
         {
@@ -100,7 +102,7 @@ namespace Keyboard
             }
             else
             {
-                string str = "";
+                string str =handId.ToString() + ",";
                 str += (id.ToString() + ",");
                 str += (time.Subtract(Config.startTime).TotalMilliseconds.ToString() + ",");
                 str += (type.ToString() + "," + pos.X + "," + pos.Y + "," + dest + "," + rawKey.ToString() + "," + predictHints);

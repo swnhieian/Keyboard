@@ -20,8 +20,8 @@ using NAudio.Wave;
 
 namespace Keyboard
 {
-    enum LogType { Type, RawInput, Delete, Space, Enter, Select, Reset, TouchUp, TouchMove, TouchDown};
-    class Log
+    public enum LogType { Type, RawInput, Delete, Space, Enter, Select, Reset, TouchUp, TouchMove, TouchDown};
+    public class Log
     {
         private bool isBehavior;
         private MainWindow window;
@@ -49,7 +49,7 @@ namespace Keyboard
             this.window = window;
             this.isBehavior = isBehavior;
             this.statusAnalyzer = new StatusAnalyze(window);
-            logDir = Directory.GetCurrentDirectory() + "\\logs\\" + Config.userName;
+            logDir = Directory.GetCurrentDirectory() + "\\logs\\" + Config.userName+ Config.startTime.ToString("_MM_dd_HH_mm_ss");
             if (!Directory.Exists(logDir))
             {
                 Directory.CreateDirectory(logDir);
@@ -89,11 +89,11 @@ namespace Keyboard
             this.logList.Add(record);
             
         }*/
-        public void addLog(LogType logType, Point pos, int id, Key rawKey = Key.None)
+        public void addLog(LogType logType, Point pos, int id, int handId, Key rawKey = Key.None)
         {
             if (Config.collectDataStatus == CollectDataStatus.Started)
             {
-                LogRecord record = new LogRecord(logType, pos);
+                LogRecord record = new LogRecord(logType, pos, handId);
                 record.setId(id);
                 if (isBehavior)
                 {
@@ -120,7 +120,7 @@ namespace Keyboard
         {
             if (Config.collectDataStatus == CollectDataStatus.Started)
             {
-                string fileName = Config.startTime.ToString("MM_dd_HH_mm_ss") + (isBehavior ? "_behavior_" : "") + ".txt";
+                string fileName = Config.collectDataMode.ToString() + (isBehavior ? "_behavior_" : "_") + "data.txt";
 
                 sw = new StreamWriter(logDir + "\\" + fileName, true);
                 foreach (LogRecord log in logList)
@@ -131,10 +131,19 @@ namespace Keyboard
                 logList.Clear();
             }
         }
+        public void saveTasks()
+        {
+
+            string fileName = Config.collectDataMode.ToString() + "_tasks.txt";
+            sw = new StreamWriter(logDir + "\\" + fileName, true);
+            tasks.saveTasks(sw);
+            sw.Close();
+
+        }
         public void startRecording()
         {
             if (waveIn != null) return;
-            string fileName = Config.startTime.ToString("MM_dd_HH_mm_ss") + ".wav";
+            string fileName = Config.collectDataMode.ToString() + "_audio.wav";
             waveIn = new WaveIn { WaveFormat = new WaveFormat(8000, 1) };
             sampleAggregator = new SampleAggregator();
             sampleAggregator.MaximumCalculated += OnRecorderMaximumCalculated;

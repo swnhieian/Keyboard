@@ -12,11 +12,17 @@ namespace Keyboard
         private int id;
         private double time;
         private Point pos;
-        public HandPoint(int id, Point pos)
+        private int handId;
+        public HandPoint(int id, Point pos, int handId)
         {
             this.id = id;
             this.pos = pos;
             this.time = DateTime.Now.Subtract(Config.startTime).TotalMilliseconds;
+            this.handId = handId;
+        }
+        public int HandId
+        {
+            get { return handId; }
         }
         public bool isValidateTouch(HandPoint startHp)
         {

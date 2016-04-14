@@ -24,30 +24,33 @@ namespace Keyboard
         }
         public void addTouchDown(int id, Point pos)
         {
-            //Debug.Assert(!screenHandPoints.ContainsKey(id));
+           // Debug.Assert(!screenHandPoints.ContainsKey(id));
             if (!screenHandPoints.ContainsKey(id))
             {
-                this.behaviorLog.addLog(LogType.TouchDown, pos, id);
-                HandPoint hp = new HandPoint(id, pos);
+                
+                Config.handIdCount++;
+                HandPoint hp = new HandPoint(id, pos, Config.handIdCount);
+                this.behaviorLog.addLog(LogType.TouchDown, pos, id, hp.HandId);
                 screenHandPoints.Add(id, hp);
             } else
             {
-                MessageBox.Show("down already in");
+                //MessageBox.Show("down already in");
                 Console.WriteLine("add an existing touch");
             }
             
         }
         public void addTouchMove(int id, Point pos)
         {
-            //Debug.Assert(screenHandPoints.ContainsKey(id));
+           // Debug.Assert(screenHandPoints.ContainsKey(id));
             if (screenHandPoints.ContainsKey(id))
             {
-                this.behaviorLog.addLog(LogType.TouchMove, pos, id);
-                HandPoint hp = new HandPoint(id, pos);
+                
+                HandPoint hp = new HandPoint(id, pos, screenHandPoints[id].HandId);
+                this.behaviorLog.addLog(LogType.TouchMove, pos, id, hp.HandId);
             }
             else
             {
-                MessageBox.Show("move not in");
+                //MessageBox.Show("move not in");
                 Console.WriteLine("detect a non-existing touch");
             }
 
@@ -57,18 +60,19 @@ namespace Keyboard
             //Debug.Assert(screenHandPoints.ContainsKey(id));
             if (screenHandPoints.ContainsKey(id))
             {
-                this.behaviorLog.addLog(LogType.TouchUp, pos, id);
-                HandPoint hp = new HandPoint(id, pos);
+                                
                 HandPoint startHp = screenHandPoints[id];
+                HandPoint hp = new HandPoint(id, pos, startHp.HandId);
+                this.behaviorLog.addLog(LogType.TouchUp, pos, id, hp.HandId);
                 screenHandPoints.Remove(id);
                 if (hp.isSwapLeft(startHp))
                 {
                     //左滑删除
-                    this.keyboard.delete();
+                    //this.keyboard.delete();
                 }
                 else if (hp.isSwapRight(startHp))
                 {
-                    this.keyboard.select(0);
+                    //this.keyboard.select(0);
                 }
                 else
                 {
@@ -83,14 +87,14 @@ namespace Keyboard
                         //MessageBox.Show("2");
                         //是一次有效的点击
                         //MessageBox.Show(String.Format("{0},{1}", pos.X,pos.Y));
-                        this.keyboard.touchDown(pos, id);
-                        this.keyboard.touchUp(pos, id);
+                        this.keyboard.touchDown(pos, id, hp.HandId);
+                        this.keyboard.touchUp(pos, id, hp.HandId);
                         this.window.task.startTask();
                     }
                 }
             } else
             {
-                MessageBox.Show("up not in");
+                //MessageBox.Show("up not in");
                 Console.WriteLine("detect a non-existing touch");
             }
         }

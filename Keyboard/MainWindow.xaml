@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Keyboard"
         mc:Ignorable="d"
-        Title="MainWindow" Height="798.4" Width="1679.6" AllowsTransparency="True">
+        Title="MainWindow" Height="798.4" Width="1679.6" AllowsTransparency="True" TouchDown="Window_TouchDown" TouchMove="Window_TouchMove" TouchUp="Window_TouchUp">
     <Grid Name="mainGrid" Canvas.Left="0" Canvas.Top="0" Margin="0,0,30.6,-0.2">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -20,8 +20,12 @@
         <Canvas Name="inputCanvas" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="279" Margin="10,10,-174,0" VerticalAlignment="Top" Width="1634" Grid.ColumnSpan="2">
             <TextBox Name="inputTextBox" Height="66" Canvas.Left="110" TextWrapping="Wrap" Text="TextBox" Canvas.Top="92" Width="677" PreviewKeyDown="inputTextBox_PreviewKeyDown"/>
             <TextBlock x:Name="taskStatusBlock" Canvas.Left="10" TextWrapping="Wrap" Text="Status" Canvas.Top="10" Height="26" Width="722"/>
+            <Button x:Name="deleteButton" Content="删除" Canvas.Left="509" Canvas.Top="182" Width="223" TouchDown="deleteButton_Click" TouchUp="button_TouchUp" Height="71"/>
+            <Button x:Name="enterButton" Content="下一句" Canvas.Left="792" Canvas.Top="182" Width="174" TouchDown="enterButton_Click" TouchUp="button_TouchUp" Height="71"/>
+            <Button x:Name="startButton" Content="开始" Canvas.Left="212" Canvas.Top="182" Width="204" TouchDown="startButton_Click" TouchUp="button_TouchUp" Height="71"/>
+            <Button x:Name="resetButton" Content="重置" Canvas.Left="10" Canvas.Top="182" Width="134" TouchDown="resetButton_Click" TouchUp="button_TouchUp" Height="71"/>
         </Canvas>
-        <Expander x:Name="expander" Grid.Column="1" Header="Config" HorizontalAlignment="Left" VerticalAlignment="Top" Width="400" Margin="900,0,-73,0">
+        <Expander x:Name="expander" Grid.Column="1" Header="Config" HorizontalAlignment="Left" VerticalAlignment="Top" Width="400" Margin="900,0,-73,0" IsExpanded="True">
             <Canvas x:Name="configCanvas"  HorizontalAlignment="Left" Height="318" VerticalAlignment="Top" Width="293" MouseDown="configCanvas_MouseDown" PreviewKeyDown="configCanvas_PreviewKeyDown" Margin="0,0,-97.2,0">
                 <Button x:Name="practiceButton" Content="切换应用" Canvas.Left="27" Canvas.Top="39" Width="75" Click="practiceButton_Click"/>
                 <CheckBox x:Name="showTaskCheckBox" Content="显示任务" Canvas.Left="136" Canvas.Top="5" Checked="showTaskCheckBox_Checked" Unchecked="showTaskCheckBox_Unchecked" IsChecked="True"/>
@@ -31,17 +35,18 @@
                     <ComboBoxItem Selected="ComboBoxItem_Selected_1" IsSelected="True">Absolute</ComboBoxItem>
                     <ComboBoxItem Selected="ComboBoxItem_Selected_2">CollectData</ComboBoxItem>
                 </ComboBox>
-                <ComboBox x:Name="speedStatusSelect" Canvas.Left="27" Canvas.Top="69" Width="81" SelectionChanged="speedStatusSelect_SelectionChanged">
-                    <ComboBoxItem IsSelected="True">Normal</ComboBoxItem>
-                    <ComboBoxItem>Slow</ComboBoxItem>
-                    <ComboBoxItem>Fast</ComboBoxItem>
-                </ComboBox>
+
                 <ProgressBar Name="progressBar" Height="10" Canvas.Left="136" Canvas.Top="159" Width="136"/>
                 <TextBox x:Name="statusBox" Height="22" Canvas.Left="141" TextWrapping="Wrap" Text="状态" Canvas.Top="31" Width="120"/>
                 <TextBox x:Name="inclinometerReadingBox" Height="75" Canvas.Left="141" TextWrapping="Wrap" Text="TextBox" Canvas.Top="69" Width="120"/>
                 <TextBox x:Name="moveStatusBox" Height="23" Canvas.Left="229" TextWrapping="Wrap" Text="动静" Canvas.Top="3" Width="32"/>
-                <Button x:Name="startButton" Content="开始" Canvas.Left="33" Canvas.Top="249" Width="75" Click="startButton_Click"/>
-                <Button x:Name="resetButton" Content="重置" Canvas.Left="170" Canvas.Top="249" Width="74" Click="resetButton_Click"/>
+                <ComboBox x:Name="speedStatusSelect" Canvas.Left="26" Canvas.Top="250" Width="171" SelectionChanged="speedStatusSelect_SelectionChanged" Height="22">
+                    <ComboBoxItem IsSelected="True">Normal</ComboBoxItem>
+                    <ComboBoxItem>Eyes-Engaged-OneFinger</ComboBoxItem>
+                    <ComboBoxItem>Eyes-Engaged-TwoFinger</ComboBoxItem>
+                    <ComboBoxItem>Semi-EyesFree</ComboBoxItem>
+                    <ComboBoxItem>Full-EyesFree</ComboBoxItem>
+                </ComboBox>
             </Canvas>
         </Expander>
     </Grid>
